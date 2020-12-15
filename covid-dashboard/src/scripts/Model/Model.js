@@ -1,17 +1,17 @@
-import axios from "axios";
-
 export default class Model {
   constructor() {
     this.loading = false;
+    this.loadingCountry = false;
   }
 
   async getCovidData() {
     this.loading = true;
     let data;
     try {
-      const response = await axios.get(`https://api.covid19api.com/summary`);
-
-      data = response.data;
+      const url = `https://api.covid19api.com/summary`;
+      const res = await fetch(url);
+      data = await res.json();
+      console.log(data);
     } catch (e) {
       console.log("ошибка");
     } finally {
@@ -20,19 +20,18 @@ export default class Model {
     return data;
   }
 
-  async getMap() {}
+  async getCountryData() {
+    this.loadingCountry = true;
+    let dataCountry;
+    try {
+      const urlCountry = `https://restcountries.eu/rest/v2/all`;
+      const resCountry = await fetch(urlCountry);
+      dataCountry = await resCountry.json();
+    } catch (e) {
+      console.log("ошибка");
+    } finally {
+      this.loadingCountry = false;
+    }
+    return dataCountry;
+  }
 }
-
-const url = `https://api.covid19api.com/summary`;
-const res = await fetch(url);
-const data = await res.json();
-this.dataCovidCountry = data.Countries;
-this.dataCovidGlobal = data.Global;
-console.log(data);
-console.log(this.dataCovidCountry, this.dataCovidGlobal);
-this.addCovidTable();
-this.addCovidTableData(
-  this.dataCovidGlobal.TotalConfirmed,
-  this.dataCovidGlobal.TotalDeaths,
-  this.dataCovidGlobal.TotalRecovered
-);
