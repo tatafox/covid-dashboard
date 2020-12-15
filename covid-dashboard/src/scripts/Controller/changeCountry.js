@@ -1,22 +1,27 @@
-let country;
+let currentCountry;
+let setCountryFlag = false;
 
 function setCountry(e, dataCovidCountry) {
+  //console.log(e.target.value);
   const dataList = document.getElementById("city-list");
+  setCountryFlag = false;
   if (
     e.type === "blur" ||
     (e.type === "keydown" && (e.which == 13 || e.keyCode == 13))
   ) {
+    setCountryFlag = true;
     if (e.target.value === "") {
       setDefault(e, dataList);
     } else {
-      country = dataCovidCountry.filter(
-        (item) => item.Slug === e.target.value.toLowerCase()
+      //console.log(e.target.value);
+      currentCountry = dataCovidCountry.filter(
+        (item) => item.Country.toLowerCase() === e.target.value.toLowerCase()
       );
-      console.log(country);
-      if (!country || country.length === 0) {
+      //console.log(currentCountry);
+      if (!currentCountry || currentCountry.length === 0) {
         setDefault(e, dataList);
       } else {
-        e.target.value = country[0].Country;
+        e.target.value = currentCountry[0].Country;
       }
       e.target.blur();
     }
@@ -43,8 +48,8 @@ function clickCountry(e) {
 
 function setDefault(e, dataList) {
   e.target.value = "[Enter city]";
-  country = "";
+  currentCountry = "";
   dataList.innerHTML = "";
   e.target.blur();
 }
-export { setCountry, clickCountry, country };
+export { setCountry, clickCountry, currentCountry, setCountryFlag };

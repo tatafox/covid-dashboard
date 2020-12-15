@@ -1,6 +1,11 @@
 const POPULATIONOFEARTH = 7827000000;
 
-import { setCountry, clickCountry, country } from "./changeCountry.js";
+import {
+  setCountry,
+  clickCountry,
+  currentCountry,
+  setCountryFlag,
+} from "./changeCountry.js";
 
 export default class Controller {
   constructor(view, model) {
@@ -13,31 +18,75 @@ export default class Controller {
     this.checkboxLastDay;
     this.checkboxOneHundThous;
     this.covidTableData;
-    this.country = "";
+    this.country;
+    this.covidList;
 
     this.init();
   }
 
   init() {
     this.getCovidData();
+    this.getCountryData();
     this.view.addCovidTable();
-    this.view.checkboxLastDay.addEventListener("click", () => {
-      this.checkboxLastDay = this.view.checkboxLastDay.checked;
-      this.changeCovidTableData();
+
+    this.view.checkboxLastDay.addEventListener("click", () =>
+      this.setCheckbox()
+    );
+    this.view.checkboxOneHundThous.addEventListener("click", () =>
+      this.setCheckbox()
+    );
+    this.view.covidTableCityInput.addEventListener(
+      "keydown",
+      (e) => this.changeCounty(e, "set")
+      //setCountry(e, this.dataCovidCountry)
+    );
+    this.view.covidTableCityInput.addEventListener(
+      "click",
+      (e) => this.changeCounty(e, "click")
+      //clickCountry(e)
+    );
+    this.view.covidTableCityInput.addEventListener(
+      "blur",
+      (e) => this.changeCounty(e, "set")
+      //setCountry(e, this.dataCovidCountry)
+    );
+  }
+
+  setCovidDataList() {
+    this.view.clearDOMItem(this.covidList);
+    this.dataCovidCountry.forEach((item) => {
+      const findCountry = this.searchCountryData(item.CountryCode);
+      console.log(findCountry);
+      const flagSrc = !findCountry ? "" : findCountry.flag;
+      this.view.createListItem(item.Country, item.TotalConfirmed, flagSrc);
     });
-    this.view.checkboxOneHundThous.addEventListener("click", () => {
-      this.checkboxOneHundThous = this.view.checkboxOneHundThous.checked;
-      this.changeCovidTableData();
-    });
-    this.view.covidTableCityInput.addEventListener("keydown", (e) =>
-      setCountry(e, this.dataCovidCountry)
-    );
-    this.view.covidTableCityInput.addEventListener("click", (e) =>
-      clickCountry(e)
-    );
-    this.view.covidTableCityInput.addEventListener("blur", (e) =>
-      setCountry(e, this.dataCovidCountry)
-    );
+  }
+
+  setCheckbox() {
+    this.checkboxLastDay = this.view.checkboxLastDay.checked;
+    this.checkboxOneHundThous = this.view.checkboxOneHundThous.checked;
+    const dataForDOM = !this.country ? this.dataCovidGlobal : this.country;
+    this.changeCovidTableData(dataForDOM, POPULATIONOFEARTH);
+  }
+
+  changeCounty(e, type) {
+    type === "set" ? setCountry(e, this.dataCovidCountry) : clickCountry(e);
+    if (setCountryFlag) {
+      if (!currentCountry) {
+        this.changeCovidTableData(this.dataCovidGlobal, POPULATIONOFEARTH);
+        this.country = "";
+      } else {
+        this.country = currentCountry[0];
+        //получаем популяцию страны
+        const findCountry = this.searchCountryData(this.country.CountryCode);
+        console.log(findCountry); //flag
+        this.changeCovidTableData(this.country, findCountry.population);
+      }
+    }
+  }
+
+  searchCountryData(countryCode) {
+    return this.dataCountry.find((item) => item.alpha2Code === countryCode);
   }
 
   async getCovidData() {
@@ -49,22 +98,28 @@ export default class Controller {
       this.dataCovidGlobal.TotalDeaths,
       this.dataCovidGlobal.TotalRecovered
     );
+    this.view.addCovidList(this.dataCovidCountry);
+    this.covidList = this.view.covidList;
+    this.setCovidDataList();
   }
 
-  changeCovidTableData() {
+  async getCountryData() {
+    this.dataCountry = await this.model.getCountryData();
+    console.log(this.dataCountry);
+  }
+
+  changeCovidTableData(dataCovid, population) {
     let confirmed, deaths, recovered;
     if (this.checkboxLastDay) {
-      confirmed = this.dataCovidGlobal.NewConfirmed;
-      deaths = this.dataCovidGlobal.NewDeaths;
-      recovered = this.dataCovidGlobal.NewRecovered;
+      confirmed = dataCovid.NewConfirmed;
+      deaths = dataCovid.NewDeaths;
+      recovered = dataCovid.NewRecovered;
     } else {
-      confirmed = this.dataCovidGlobal.TotalConfirmed;
-      deaths = this.dataCovidGlobal.TotalDeaths;
-      recovered = this.dataCovidGlobal.TotalRecovered;
+      confirmed = dataCovid.TotalConfirmed;
+      deaths = dataCovid.TotalDeaths;
+      recovered = dataCovid.TotalRecovered;
     }
-    const population = this.country
-      ? POPULATIONOFEARTH / 100000
-      : POPULATIONOFEARTH / 100000;
+    population = population / 100000;
     if (this.checkboxOneHundThous) {
       confirmed = confirmed / population;
       deaths = deaths / population;

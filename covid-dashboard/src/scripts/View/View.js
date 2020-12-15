@@ -3,6 +3,7 @@ export default class View {
     this.checkboxLastDay;
     this.checkboxOneHundThous;
     this.covidTableCityInput;
+    this.covidList;
   }
 
   createElement(typeElem, className, parent, text) {
@@ -114,5 +115,97 @@ export default class View {
       "Recovered(Выздоровело):"
     );
     this.createElement("span", "covid-table__item", covidTableItem, recovered);
+  }
+
+  addCovidList(listData) {
+    const covidListWrapper = this.createElement(
+      "div",
+      "list-wrapper",
+      document.body
+    );
+    //создаем даталист поиска страны
+    /*this.covidTableCityInput = document.createElement("input");
+    this.covidTableCityInput.setAttribute("list", "city-list");
+    covidTable.appendChild(this.covidTableCityInput);
+    //<datalist id="my-list"></datalist>
+    const covidTableCityDatalist = document.createElement("datalist");
+    covidTableCityDatalist.id = "city-list";
+    covidTable.appendChild(covidTableCityDatalist);*/
+
+    /* <select name="" id="">
+2
+  <option value="pravo">Гражданское право — отрасль права, объединяющая правовые нормы, регулирующие имущественные, а также связанные и не связанные с ними личные неимущественные отношения, которые основаны на независимости оценки, имущественной самостоятельности и юридическом равенстве сторон, в целях создания наиболее благоприятных условий
+3
+  </option>
+4
+</select>
+selected="selected"*/
+    const selectListData = this.createElement(
+      "select",
+      "covid-list__select",
+      covidListWrapper
+    );
+    let options = this.createElement(
+      "option",
+      "covid-list__select",
+      selectListData,
+      "Total cases"
+    );
+    options.selected = "selected";
+    options = this.createElement(
+      "option",
+      "covid-list__select",
+      selectListData,
+      "Total death"
+    );
+    options = this.createElement(
+      "option",
+      "covid-list__select",
+      selectListData,
+      "Total recovered"
+    );
+    options = this.createElement(
+      "option",
+      "covid-list__select",
+      selectListData,
+      "New cases"
+    );
+    options = this.createElement(
+      "option",
+      "covid-list__select",
+      selectListData,
+      "New death"
+    );
+    options = this.createElement(
+      "option",
+      "covid-list__select",
+      selectListData,
+      "New recovered"
+    );
+    this.covidList = this.createElement("ul", "covid-list", covidListWrapper);
+    /*console.log(listData);
+    listData.forEach((item) => {
+      const covidItem = this.createElement("li", "covid-item", covidList);
+      this.createElement("span", "covid-item__name", covidItem, item.Country);
+      this.createElement(
+        "span",
+        "covid-item__data",
+        covidItem,
+        item.TotalConfirmed
+      );
+    });*/
+  }
+
+  clearDOMItem(item) {
+    item.innerHTML = "";
+  }
+
+  createListItem(itemCountry, itemData, flag) {
+    const covidItem = this.createElement("li", "covid-item", this.covidList);
+    const img = this.createElement("img", "covid-item__data", covidItem);
+    img.src = flag;
+    img.width = "50";
+    this.createElement("span", "covid-item__name", covidItem, itemCountry);
+    this.createElement("span", "covid-item__data", covidItem, itemData);
   }
 }
