@@ -2,8 +2,8 @@ export default class View {
   constructor() {
     this.checkboxLastDay;
     this.checkboxOneHundThous;
-    this.covidTableCityInput;
     this.covidList;
+    this.selectListData;
   }
 
   createElement(typeElem, className, parent, text) {
@@ -24,13 +24,14 @@ export default class View {
     );*/
 
     //создаем даталист
-    this.covidTableCityInput = document.createElement("input");
+    this.addCountrySearch(covidTable, "country-search__table");
+    /*this.covidTableCityInput = document.createElement("input");
     this.covidTableCityInput.setAttribute("list", "city-list");
     covidTable.appendChild(this.covidTableCityInput);
     //<datalist id="my-list"></datalist>
     const covidTableCityDatalist = document.createElement("datalist");
     covidTableCityDatalist.id = "city-list";
-    covidTable.appendChild(covidTableCityDatalist);
+    covidTable.appendChild(covidTableCityDatalist);*/
 
     /*covidTableCity.addEventListener("keypress", this.setCountry);
     covidTableCity.addEventListener("click", this.clickCountry);
@@ -117,21 +118,42 @@ export default class View {
     this.createElement("span", "covid-table__item", covidTableItem, recovered);
   }
 
-  addCovidList(listData) {
+  addCountrySearch(parent, idName) {
+    const covidTableCityInput = this.createElement(
+      "input",
+      "search-country",
+      parent
+    );
+    //document.createElement("input");
+    covidTableCityInput.setAttribute("list", idName);
+    //parent.appendChild(covidTableCityInput);
+    //<datalist id="my-list"></datalist>
+    const covidTableCityDatalist = this.createElement(
+      "datalist",
+      "",
+      covidTableCityInput
+    );
+    //document.createElement("datalist");
+    covidTableCityDatalist.id = idName;
+    //covidTable.appendChild(covidTableCityDatalist);
+  }
+
+  addCovidList() {
     const covidListWrapper = this.createElement(
       "div",
       "list-wrapper",
       document.body
     );
     //создаем даталист поиска страны
+    this.addCountrySearch(covidListWrapper, "country-search__list");
     /*this.covidTableCityInput = document.createElement("input");
     this.covidTableCityInput.setAttribute("list", "city-list");
     covidTable.appendChild(this.covidTableCityInput);
     //<datalist id="my-list"></datalist>
     const covidTableCityDatalist = document.createElement("datalist");
     covidTableCityDatalist.id = "city-list";
-    covidTable.appendChild(covidTableCityDatalist);*/
-
+    covidTable.appendChild(covidTableCityDatalist);
+*/
     /* <select name="" id="">
 2
   <option value="pravo">Гражданское право — отрасль права, объединяющая правовые нормы, регулирующие имущественные, а также связанные и не связанные с ними личные неимущественные отношения, которые основаны на независимости оценки, имущественной самостоятельности и юридическом равенстве сторон, в целях создания наиболее благоприятных условий
@@ -140,7 +162,7 @@ export default class View {
 4
 </select>
 selected="selected"*/
-    const selectListData = this.createElement(
+    this.selectListData = this.createElement(
       "select",
       "covid-list__select",
       covidListWrapper
@@ -148,38 +170,38 @@ selected="selected"*/
     let options = this.createElement(
       "option",
       "covid-list__select",
-      selectListData,
+      this.selectListData,
       "Total cases"
     );
     options.selected = "selected";
     options = this.createElement(
       "option",
       "covid-list__select",
-      selectListData,
+      this.selectListData,
       "Total death"
     );
     options = this.createElement(
       "option",
       "covid-list__select",
-      selectListData,
+      this.selectListData,
       "Total recovered"
     );
     options = this.createElement(
       "option",
       "covid-list__select",
-      selectListData,
+      this.selectListData,
       "New cases"
     );
     options = this.createElement(
       "option",
       "covid-list__select",
-      selectListData,
+      this.selectListData,
       "New death"
     );
     options = this.createElement(
       "option",
       "covid-list__select",
-      selectListData,
+      this.selectListData,
       "New recovered"
     );
     this.covidList = this.createElement("ul", "covid-list", covidListWrapper);
