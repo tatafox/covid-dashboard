@@ -4,6 +4,9 @@ export default class View {
     this.checkboxOneHundThous;
     this.covidList;
     this.selectListData;
+    this.wrapper = this.createElement("div", "wrapper", document.body);
+    this.wrapperData = this.createElement("div", "data-wrapper", this.wrapper);
+    this.addMap();
   }
 
   createElement(typeElem, className, parent, text) {
@@ -14,8 +17,19 @@ export default class View {
     return elem;
   }
 
+  addMap() {
+    const mapWrap = this.createElement("div", "map-wrapper", this.wrapper);
+    const img = this.createElement("img", "covid-map__img", mapWrap);
+    img.src = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0jTi1xs9naXIcBK23UXcddbpU6Ad9JAHJWw&usqp=CAU`;
+  }
+
   addCovidTable() {
-    const covidTable = this.createElement("div", "covid-table", document.body);
+    //this.wrapper = this.createElement("div", "wrapper", document.body);
+    const covidTable = this.createElement(
+      "div",
+      "covid-table",
+      this.wrapperData
+    );
     /*const covidTableCity = this.createElement(
       "div",
       "covid-table__city",
@@ -38,10 +52,20 @@ export default class View {
     covidTableCity.addEventListener("blur", this.setCountry);*/
     //covidTableCity.contentEditable = true;
     //<div class="city" contenteditable="true">
+    const checkbxWrap = this.createElement(
+      "div",
+      "checkbox__wrapper",
+      covidTable
+    );
+    const LastDayWrap = this.createElement(
+      "div",
+      "checkbox-item__wrapper",
+      checkbxWrap
+    );
     this.checkboxLastDay = this.createElement(
       "input",
       "checkbox__last-day",
-      covidTable
+      LastDayWrap
     );
     this.checkboxLastDay.type = "checkbox";
     this.checkboxLastDay.id = "checkbox__last-day";
@@ -49,16 +73,22 @@ export default class View {
     let label = this.createElement(
       "label",
       "checkbox__last-day_label",
-      covidTable,
+      LastDayWrap,
       "New cases (За последние сутки)"
     );
     label.htmlFor = "checkbox__last-day";
     //this.checkboxLastDay.addEventListener("click", switchLastDay);
 
+    const OneHundThousDayWrap = this.createElement(
+      "div",
+      "checkbox-item__wrapper",
+      checkbxWrap
+    );
+
     this.checkboxOneHundThous = this.createElement(
       "input",
       "checkbox__one-hundr-thous",
-      covidTable
+      OneHundThousDayWrap
     );
     this.checkboxOneHundThous.type = "checkbox";
     this.checkboxOneHundThous.id = "checkbox__one-hundr-thous";
@@ -66,7 +96,7 @@ export default class View {
     label = this.createElement(
       "label",
       "checkbox__one-hundr-thous_label",
-      covidTable,
+      OneHundThousDayWrap,
       "100 000 population cases (На 100 000 населения)"
     );
     label.htmlFor = "checkbox__one-hundr-thous";
@@ -87,11 +117,11 @@ export default class View {
     );
     this.createElement(
       "span",
-      "covid-table__item",
+      "covid-table__span",
       covidTableItem,
       "Confirmed(Заболело):"
     );
-    this.createElement("span", "covid-table__item", covidTableItem, confirmed);
+    this.createElement("span", "covid-table__span", covidTableItem, confirmed);
     covidTableItem = this.createElement(
       "div",
       "covid-table__item",
@@ -99,11 +129,11 @@ export default class View {
     );
     this.createElement(
       "span",
-      "covid-table__item",
+      "covid-table__span",
       covidTableItem,
       "Deaths(Умерло):"
     );
-    this.createElement("span", "covid-table__item", covidTableItem, deaths);
+    this.createElement("span", "covid-table__span", covidTableItem, deaths);
     covidTableItem = this.createElement(
       "div",
       "covid-table__item",
@@ -111,11 +141,11 @@ export default class View {
     );
     this.createElement(
       "span",
-      "covid-table__item",
+      "covid-table__span",
       covidTableItem,
       "Recovered(Выздоровело):"
     );
-    this.createElement("span", "covid-table__item", covidTableItem, recovered);
+    this.createElement("span", "covid-table__span", covidTableItem, recovered);
   }
 
   addCountrySearch(parent, idName) {
@@ -142,30 +172,19 @@ export default class View {
     const covidListWrapper = this.createElement(
       "div",
       "list-wrapper",
-      document.body
+      this.wrapperData
     );
-    //создаем даталист поиска страны
-    this.addCountrySearch(covidListWrapper, "country-search__list");
-    /*this.covidTableCityInput = document.createElement("input");
-    this.covidTableCityInput.setAttribute("list", "city-list");
-    covidTable.appendChild(this.covidTableCityInput);
-    //<datalist id="my-list"></datalist>
-    const covidTableCityDatalist = document.createElement("datalist");
-    covidTableCityDatalist.id = "city-list";
-    covidTable.appendChild(covidTableCityDatalist);
-*/
-    /* <select name="" id="">
-2
-  <option value="pravo">Гражданское право — отрасль права, объединяющая правовые нормы, регулирующие имущественные, а также связанные и не связанные с ними личные неимущественные отношения, которые основаны на независимости оценки, имущественной самостоятельности и юридическом равенстве сторон, в целях создания наиболее благоприятных условий
-3
-  </option>
-4
-</select>
-selected="selected"*/
+
+    const covidListControl = this.createElement(
+      "div",
+      "list-control",
+      covidListWrapper
+    );
+
     this.selectListData = this.createElement(
       "select",
       "covid-list__select",
-      covidListWrapper
+      covidListControl
     );
     let options = this.createElement(
       "option",
@@ -204,7 +223,11 @@ selected="selected"*/
       this.selectListData,
       "New recovered"
     );
+    //создаем даталист поиска страны
+    this.addCountrySearch(covidListControl, "country-search__list");
+
     this.covidList = this.createElement("ul", "covid-list", covidListWrapper);
+
     /*console.log(listData);
     listData.forEach((item) => {
       const covidItem = this.createElement("li", "covid-item", covidList);
@@ -227,7 +250,7 @@ selected="selected"*/
     const img = this.createElement("img", "covid-item__data", covidItem);
     img.src = flag;
     img.width = "50";
-    this.createElement("span", "covid-item__name", covidItem, itemCountry);
+    this.createElement("span", "covid-item__data", covidItem, itemCountry);
     this.createElement("span", "covid-item__data", covidItem, itemData);
   }
 }
