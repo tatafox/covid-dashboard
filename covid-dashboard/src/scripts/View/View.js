@@ -4,6 +4,7 @@ export default class View {
     this.checkboxOneHundThous;
     this.covidList;
     this.selectListData;
+    this.map;
     this.wrapper = this.createElement("div", "wrapper", document.body);
     this.wrapperData = this.createElement("div", "data-wrapper", this.wrapper);
     this.addMap();
@@ -19,8 +20,11 @@ export default class View {
 
   addMap() {
     const mapWrap = this.createElement("div", "map-wrapper", this.wrapper);
-    const img = this.createElement("img", "covid-map__img", mapWrap);
-    img.src = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0jTi1xs9naXIcBK23UXcddbpU6Ad9JAHJWw&usqp=CAU`;
+    this.map = this.createElement("div", "map", mapWrap);
+    this.map.id = "map";
+
+    //const img = this.createElement("img", "covid-map__img", mapWrap);
+    //img.src = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0jTi1xs9naXIcBK23UXcddbpU6Ad9JAHJWw&usqp=CAU`;
   }
 
   addCovidTable() {
@@ -190,7 +194,7 @@ export default class View {
       "option",
       "covid-list__select",
       this.selectListData,
-      "Total cases"
+      "Total confirmed"
     );
     options.selected = "selected";
     options = this.createElement(
@@ -209,7 +213,7 @@ export default class View {
       "option",
       "covid-list__select",
       this.selectListData,
-      "New cases"
+      "New confirmed"
     );
     options = this.createElement(
       "option",

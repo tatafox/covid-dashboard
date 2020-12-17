@@ -52,7 +52,13 @@ li {
 .search-country {
   width: 150px;
   align-self: flex-end;
+  background-color: #f5fdff;
+}
 
+.list-wrapper {
+  background-color: #adf3ff;
+  margin-top: 10px;
+  padding-top: 10px;
 }
 
 .covid-table__item:nth-child(2n) {
@@ -72,11 +78,15 @@ li {
   margin: 20px 5px;
 }
 
+.list-control .search-country {
+  background-color: #adf3ff;
+}
+
 .covid-item {
   display: flex;
   justify-content: space-between;
   padding: 5px;
-  background-color: #DCFAFF;
+  background-color: #f5fdff;
 }
 
 
@@ -92,8 +102,22 @@ li {
 
 
 
+#map {
+  width: calc(100vw - 300px);
+  height: 100%;
+  background: aliceblu
+    /* width: 1500px;
+  height: 800px;*/
+}
 
 
+/*position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: 1000;
+background: aliceblue;*/
 
 .covid-map__img {
   width: 1535px;

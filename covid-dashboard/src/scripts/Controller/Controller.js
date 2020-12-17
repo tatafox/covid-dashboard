@@ -7,6 +7,13 @@ import {
   setCountryFlag,
 } from "./changeCountry.js";
 
+//import { addMap, addMarker, map } from "./map.js";
+import {
+  initChartMap,
+  createPolygonSeriesData,
+  createTooltipText,
+} from "./chartMap.js";
+
 export default class Controller {
   constructor(view, model) {
     this.view = view;
@@ -26,10 +33,16 @@ export default class Controller {
   }
 
   init() {
-    this.getCovidData();
     this.getCountryData();
+    this.getCovidData();
+
     this.view.addCovidTable();
     this.view.addCovidList();
+
+    initChartMap();
+
+    //addMap(); //this.view.map
+
     this.view.selectListData.addEventListener("change", (e) =>
       this.changeListData(e)
     );
@@ -59,6 +72,13 @@ export default class Controller {
     });
   }
 
+  /*addMapMarker() {
+    this.dataCovidCountry.forEach((item) => {
+      const findCountry = this.searchCountryData(item.CountryCode);
+      addMarker(findCountry.latlng[0], findCountry.latlng[1], findCountry.name);
+    });
+  }*/
+
   setCovidDataList(dataType, countrySearch) {
     const dataArray = [];
     this.view.clearDOMItem(this.covidList);
@@ -69,7 +89,6 @@ export default class Controller {
       const data = this.switchCovidData(dataType, item);
       const arrayRow = [item.Country, data, flagSrc];
       dataArray.push(arrayRow);
-      //console.log(data);
       //this.view.createListItem(item.Country, data, flagSrc);
     });
     if (countrySearch) {
@@ -104,7 +123,7 @@ export default class Controller {
       case "Total recovered":
         data = item.TotalRecovered;
         break;
-      case "New cases":
+      case "New confirmed":
         data = item.NewConfirmed;
         break;
       case "New death":
@@ -153,6 +172,31 @@ export default class Controller {
     );
     this.covidList = this.view.covidList;
     this.setCovidDataList();
+    const dataMap = this.createDataArray();
+    createPolygonSeriesData(dataMap);
+    createTooltipText("TotalConfirmed");
+
+    //this.addMapMarker();
+  }
+
+  createDataArray() {
+    const data = [];
+    this.dataCovidCountry.forEach((item) => {
+      const findCountry = this.searchCountryData(item.CountryCode);
+      const obj = {
+        id: item.CountryCode,
+        population: findCountry.population,
+        TotalConfirmed: item.TotalConfirmed,
+        TotalDeaths: item.TotalDeaths,
+        TotalRecovered: item.TotalRecovered,
+        NewConfirmed: item.NewConfirmed,
+        NewDeaths: item.NewDeaths,
+        NewRecovered: item.NewRecovered,
+      };
+      data.push(obj);
+    });
+    console.log(data);
+    return data;
   }
 
   async getCountryData() {

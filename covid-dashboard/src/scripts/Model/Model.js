@@ -35,3 +35,18 @@ export default class Model {
     return dataCountry;
   }
 }
+
+/*async getReverseGeocod(lat,lng) {
+  this.loading = true;
+  let data;
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;      const res = await fetch(url);
+    data = await res.json();
+    console.log(data);
+  } catch (e) {
+    console.log("ошибка");
+  } finally {
+    this.loading = false;
+  }
+  return data;
+}*/
