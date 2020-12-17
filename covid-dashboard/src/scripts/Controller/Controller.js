@@ -120,7 +120,11 @@ export default class Controller {
 
     delPolygonSeries();
     createPolygonSeries(this.dataMap);
-    createTooltipText(this.switchCovidData(), this.dataMap);
+    createTooltipText(
+      this.switchCovidData(),
+      this.dataMap,
+      this.checkboxOneHundThous
+    );
   }
 
   switchCovidData(item) {
@@ -225,9 +229,9 @@ export default class Controller {
     }
     population = population / 100000;
     if (this.checkboxOneHundThous) {
-      confirmed = confirmed / population;
-      deaths = deaths / population;
-      recovered = recovered / population;
+      confirmed = Math.round((confirmed / population) * 100) / 100;
+      deaths = Math.round((deaths / population) * 100) / 100;
+      recovered = Math.round((recovered / population) * 100) / 100;
     }
     this.view.addCovidTableData(confirmed, deaths, recovered);
   }

@@ -104,19 +104,25 @@ function createTooltipText(type, dataMap, flag100) {
   const str = "[bold]{name}:[/] {" + findType + "}";
   //console.log(str);
   //polygonSeries.tooltipText = str;
-  polygonTemplate.tooltipText = str;
+  //polygonTemplate.tooltipText = str;
   //console.log(polygonTemplate.tooltipText);
   //polygonTemplate.fillOpacity = n;
   polygonTemplate.adapter.add("fillOpacity", function (fillOpacity, target) {
     const currentValue = target.dataItem._dataContext[findType];
     const opacity = !currentValue ? 0.2 : (currentValue * 0.7) / max + 0.2; //.TotalConfirmed);
-    console.log(opacity);
     return (fillOpacity = opacity);
   });
-  /*polygonTemplate.adapter.add("tooltipText", function (tooltipText, target) {
-    console.log(target.dataItem._dataContext[findType], findType, type); //.TotalConfirmed);
-    return (tooltipText = target.dataItem._dataContext[findType]);
-  });*/
+  polygonTemplate.adapter.add("tooltipText", function (tooltipText, target) {
+    const currentValue = target.dataItem._dataContext[findType];
+    const valOn100 = !currentValue
+      ? 0
+      : (currentValue * 100000) / target.dataItem._dataContext.population;
+    const amount = flag100
+      ? Math.round(valOn100 * 100) / 100
+      : currcurrentValueentNum;
+    const str = "[bold]{name}:[/] " + amount + " ";
+    return (tooltipText = str);
+  });
 
   //polygonSeries.dispose();
 }
