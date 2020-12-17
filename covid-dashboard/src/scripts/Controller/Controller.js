@@ -10,7 +10,8 @@ import {
 //import { addMap, addMarker, map } from "./map.js";
 import {
   initChartMap,
-  createPolygonSeriesData,
+  createPolygonSeries,
+  delPolygonSeries,
   createTooltipText,
 } from "./chartMap.js";
 
@@ -28,6 +29,7 @@ export default class Controller {
     this.country;
     this.covidList;
     this.dataType;
+    this.dataMap;
 
     this.init();
   }
@@ -79,14 +81,14 @@ export default class Controller {
     });
   }*/
 
-  setCovidDataList(dataType, countrySearch) {
+  setCovidDataList(countrySearch) {
     const dataArray = [];
     this.view.clearDOMItem(this.covidList);
     this.dataCovidCountry.forEach((item) => {
       const findCountry = this.searchCountryData(item.CountryCode);
       //console.log(findCountry);
       const flagSrc = !findCountry ? "" : findCountry.flag;
-      const data = this.switchCovidData(dataType, item);
+      const data = this.switchCovidData(item);
       const arrayRow = [item.Country, data, flagSrc];
       dataArray.push(arrayRow);
       //this.view.createListItem(item.Country, data, flagSrc);
@@ -111,29 +113,36 @@ export default class Controller {
 
   changeListData(e) {
     this.dataType = e.target.value;
-    this.setCovidDataList(this.dataType);
+    this.setCovidDataList();
+    //document.getElementById("map").innerHTML = "";
+    //initChartMap();
+    //const dataMap = this.createDataArray();
+
+    delPolygonSeries();
+    createPolygonSeries(this.dataMap);
+    createTooltipText(this.switchCovidData(), this.dataMap);
   }
 
-  switchCovidData(dataType, item) {
+  switchCovidData(item) {
     let data;
-    switch (dataType) {
+    switch (this.dataType) {
       case "Total death":
-        data = item.TotalDeaths;
+        data = !item ? "TotalDeaths" : item.TotalDeaths;
         break;
       case "Total recovered":
-        data = item.TotalRecovered;
+        data = !item ? "TotalRecovered" : item.TotalRecovered;
         break;
       case "New confirmed":
-        data = item.NewConfirmed;
+        data = !item ? "NewConfirmed" : item.NewConfirmed;
         break;
       case "New death":
-        data = item.NewDeaths;
+        data = !item ? "NewDeaths" : item.NewDeaths;
         break;
       case "New recovered":
-        data = item.NewRecovered;
+        data = !item ? "NewRecovered" : item.NewRecovered;
         break;
       default:
-        data = item.TotalConfirmed;
+        data = !item ? "TotalConfirmed" : item.TotalConfirmed;
         break;
     }
     return data;
@@ -172,9 +181,9 @@ export default class Controller {
     );
     this.covidList = this.view.covidList;
     this.setCovidDataList();
-    const dataMap = this.createDataArray();
-    createPolygonSeriesData(dataMap);
-    createTooltipText("TotalConfirmed");
+    this.dataMap = this.createDataArray();
+    createPolygonSeries(this.dataMap);
+    createTooltipText("TotalConfirmed", this.dataMap);
 
     //this.addMapMarker();
   }
@@ -195,7 +204,6 @@ export default class Controller {
       };
       data.push(obj);
     });
-    console.log(data);
     return data;
   }
 
