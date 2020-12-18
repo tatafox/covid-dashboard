@@ -23,8 +23,8 @@ export default class Controller {
     this.dataCovidCountry = {};
     this.dataCovidGlobal = {};
     this.dataCountry = {};
-    this.checkboxLastDay;
-    this.checkboxOneHundThous;
+    this.checkboxLastDay = false;
+    this.checkboxOneHundThous = false;
     this.covidTableData;
     this.country;
     this.covidList;
@@ -45,15 +45,19 @@ export default class Controller {
 
     //addMap(); //this.view.map
 
-    this.view.selectListData.addEventListener("change", (e) =>
-      this.changeListData(e)
-    );
-    this.view.checkboxLastDay.addEventListener("click", () =>
+    //this.view.selectListData.addEventListener
+    document.querySelectorAll(".select-data").forEach((item) => {
+      item.addEventListener("change", (e) => this.changeListData(e));
+    });
+    /*this.view.checkboxLastDay.addEventListener("click", () =>
       this.setCheckbox()
-    );
-    this.view.checkboxOneHundThous.addEventListener("click", () =>
-      this.setCheckbox()
-    );
+    );*/
+    document.querySelectorAll(".checkbox__last-day").forEach((item) => {
+      item.addEventListener("click", () => this.setCheckboxLastDay());
+    });
+    document.querySelectorAll(".checkbox__one-hundr-thous").forEach((item) => {
+      item.addEventListener("click", () => this.setCheckboxOneHundThous());
+    });
 
     document.querySelectorAll(".search-country").forEach((item) => {
       item.addEventListener(
@@ -88,7 +92,14 @@ export default class Controller {
       const findCountry = this.searchCountryData(item.CountryCode);
       //console.log(findCountry);
       const flagSrc = !findCountry ? "" : findCountry.flag;
-      const data = this.switchCovidData(item);
+
+      let data = this.switchCovidData(item);
+
+      const population = !findCountry ? 0 : findCountry.population;
+      data = !this.checkboxOneHundThous
+        ? data
+        : Math.round((data * 10000000) / findCountry.population) / 100;
+
       const arrayRow = [item.Country, data, flagSrc];
       dataArray.push(arrayRow);
       //this.view.createListItem(item.Country, data, flagSrc);
@@ -104,11 +115,38 @@ export default class Controller {
     }
   }
 
+  setCheckboxLastDay() {
+    this.checkboxLastDay = !this.checkboxLastDay;
+    this.setCheckbox();
+    document.querySelectorAll(".checkbox__last-day").forEach((item) => {
+      item.checked = this.checkboxOneHundThous;
+    });
+  }
+
+  setCheckboxOneHundThous() {
+    this.checkboxOneHundThous = !this.checkboxOneHundThous;
+    this.setCheckbox();
+    document.querySelectorAll(".checkbox__one-hundr-thous").forEach((item) => {
+      item.checked = this.checkboxOneHundThous;
+    });
+  }
+
   setCheckbox() {
-    this.checkboxLastDay = this.view.checkboxLastDay.checked;
-    this.checkboxOneHundThous = this.view.checkboxOneHundThous.checked;
+    console.log("df");
     const dataForDOM = !this.country ? this.dataCovidGlobal : this.country;
     this.changeCovidTableData(dataForDOM, POPULATIONOFEARTH);
+    this.updateMap();
+    this.setCovidDataList();
+  }
+
+  updateMap() {
+    delPolygonSeries();
+    createPolygonSeries(this.dataMap);
+    createTooltipText(
+      this.switchCovidData(),
+      this.dataMap,
+      this.checkboxOneHundThous
+    );
   }
 
   changeListData(e) {
@@ -117,14 +155,14 @@ export default class Controller {
     //document.getElementById("map").innerHTML = "";
     //initChartMap();
     //const dataMap = this.createDataArray();
-
-    delPolygonSeries();
+    this.updateMap();
+    /*delPolygonSeries();
     createPolygonSeries(this.dataMap);
     createTooltipText(
       this.switchCovidData(),
       this.dataMap,
       this.checkboxOneHundThous
-    );
+    );*/
   }
 
   switchCovidData(item) {
@@ -153,17 +191,18 @@ export default class Controller {
   }
 
   changeCounty(e, type) {
+    console.log("sd");
     type === "set" ? setCountry(e, this.dataCovidCountry) : clickCountry(e);
     if (setCountryFlag) {
       if (!currentCountry) {
         this.changeCovidTableData(this.dataCovidGlobal, POPULATIONOFEARTH);
-        this.setCovidDataList(this.dataType);
+        this.setCovidDataList();
         this.country = "";
       } else {
         this.country = currentCountry[0];
         //получаем популяцию страны
         const findCountry = this.searchCountryData(this.country.CountryCode);
-        this.setCovidDataList(this.dataType, this.country.Country);
+        this.setCovidDataList(this.country.Country);
         console.log(findCountry); //flag
         this.changeCovidTableData(this.country, findCountry.population);
       }
@@ -217,7 +256,7 @@ export default class Controller {
   }
 
   changeCovidTableData(dataCovid, population) {
-    let confirmed, deaths, recovered;
+    /*let confirmed, deaths, recovered;
     if (this.checkboxLastDay) {
       confirmed = dataCovid.NewConfirmed;
       deaths = dataCovid.NewDeaths;
@@ -226,8 +265,15 @@ export default class Controller {
       confirmed = dataCovid.TotalConfirmed;
       deaths = dataCovid.TotalDeaths;
       recovered = dataCovid.TotalRecovered;
-    }
+    }*/
+    const type = this.checkboxLastDay ? "New" : "Total";
+
+    let confirmed = dataCovid[`${type}Confirmed`];
+    let deaths = dataCovid[`${type}Deaths`];
+    let recovered = dataCovid[`${type}Recovered`];
+
     population = population / 100000;
+
     if (this.checkboxOneHundThous) {
       confirmed = Math.round((confirmed / population) * 100) / 100;
       deaths = Math.round((deaths / population) * 100) / 100;

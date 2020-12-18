@@ -9,6 +9,38 @@ li {
   list-style-type: none;
 }
 
+h1 {
+  font-weight: 700;
+  text-align: start;
+  padding: 5px 0;
+  margin-left: 30px;
+}
+
+.map-wrapper {
+  order: -1;
+}
+
+.header {
+  background-color: #15B2D6;
+  color: white;
+  height: 60px;
+}
+
+.footer {
+  background-color: #e3fbff;
+  display: flex;
+  justify-content: center;
+  height: 50px;
+}
+
+.footer__item {
+  margin: 10px 20px;
+}
+
+.footer__img {
+  width: 75px;
+}
+
 .wrapper {
   display: flex;
   background-color: #f5fdff;
@@ -28,7 +60,8 @@ li {
 }
 
 .covid-table {
-  padding: 10px 0;
+  /*padding: 10px 0;*/
+  height: 200px;
   background-color: #f5fdff;
   display: flex;
   flex-direction: column;
@@ -68,18 +101,32 @@ li {
 
 .covid-list {
   overflow-y: scroll;
-  max-height: 500px;
+  /*height: 500px;*/
+  height: calc(100vh - 450px);
 }
 
 .list-control {
   display: flex;
+  flex-wrap: wrap;
   /* flex-direction: column; */
   justify-content: space-between;
-  margin: 20px 5px;
+  align-items: center;
+  margin: 0 5px;
+  margin-bottom: 20px
+}
+
+.search-country {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
 }
 
 .list-control .search-country {
   background-color: #adf3ff;
+}
+
+.covid-list__select {
+  height: 25px;
 }
 
 .covid-item {
@@ -110,6 +157,25 @@ li {
   height: 800px;*/
 }
 
+.map-wrapper .list-control .search-country {
+  align-self: auto;
+  background-color: aliceblue;
+}
+
+.map-wrapper .list-control {
+  z-index: 10;
+  position: absolute;
+  /* left: 50px; */
+  right: 320px;
+  top: 85px;
+  width: 500px;
+  background-color: aliceblue;
+  /* align-content: flex-start; */
+  /* align-items: center; */
+  justify-content: space-between;
+  /* justify-items: right; */
+  /* justify-self: baseline;
+}
 
 /*position: absolute;
 top: 0;
@@ -119,7 +185,7 @@ height: 100%;
 z-index: 1000;
 background: aliceblue;*/
 
-.covid-map__img {
-  width: 1535px;
-  overflow: hidden;
-}
+  .covid-map__img {
+    width: 1535px;
+    overflow: hidden;
+  }

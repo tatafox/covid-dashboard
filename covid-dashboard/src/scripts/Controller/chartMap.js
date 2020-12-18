@@ -15,7 +15,7 @@ function initChartMap() {
   // Create map instance
   chart = am4core.create("map", am4maps.MapChart);
   chart.zoomControl = new am4maps.ZoomControl();
-  chart.zoomControl.align = "right";
+  chart.zoomControl.align = "left";
   chart.zoomControl.marginRight = 20;
   chart.zoomControl.valign = "top";
 
@@ -117,9 +117,7 @@ function createTooltipText(type, dataMap, flag100) {
     const valOn100 = !currentValue
       ? 0
       : (currentValue * 100000) / target.dataItem._dataContext.population;
-    const amount = flag100
-      ? Math.round(valOn100 * 100) / 100
-      : currcurrentValueentNum;
+    const amount = flag100 ? Math.round(valOn100 * 100) / 100 : currentValue;
     const str = "[bold]{name}:[/] " + amount + " ";
     return (tooltipText = str);
   });

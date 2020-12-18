@@ -1,13 +1,11 @@
 export default class View {
   constructor() {
-    this.checkboxLastDay;
-    this.checkboxOneHundThous;
     this.covidList;
     this.selectListData;
     this.map;
-    this.wrapper = this.createElement("div", "wrapper", document.body);
-    this.wrapperData = this.createElement("div", "data-wrapper", this.wrapper);
-    this.addMap();
+    this.wrapper;
+    this.wrapperData;
+    this.init();
   }
 
   createElement(typeElem, className, parent, text) {
@@ -18,50 +16,70 @@ export default class View {
     return elem;
   }
 
-  addMap() {
-    const mapWrap = this.createElement("div", "map-wrapper", this.wrapper);
-    this.map = this.createElement("div", "map", mapWrap);
-    this.map.id = "map";
-
-    //const img = this.createElement("img", "covid-map__img", mapWrap);
-    //img.src = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0jTi1xs9naXIcBK23UXcddbpU6Ad9JAHJWw&usqp=CAU`;
+  init() {
+    const header = this.createElement("header", "header", document.body);
+    this.createElement("h1", "header__title", header, "COVID-19 Dashboard");
+    const main = this.createElement("main", "main", document.body);
+    this.wrapper = this.createElement("div", "wrapper", main);
+    this.wrapperData = this.createElement("div", "data-wrapper", this.wrapper);
+    this.addMap();
+    this.createFooter();
   }
 
+  createFooter() {
+    const footer = this.createElement("footer", "footer", document.body);
+    this.createElement("span", "footer__item", footer, "2020");
+    let footerA = this.createElement("a", "footer__item", footer, " © tatafox");
+    footerA.href = "https://github.com/tatafox";
+    footerA.target = "_blank";
+    footerA = this.createElement("a", "footer__item", footer);
+    footerA.href = "https://rs.school/js/";
+    footerA.target = "_blank";
+    const footerIMG = this.createElement("img", "footer__img", footerA);
+    footerIMG.src = `https://rs.school/images/rs_school_js.svg`;
+  }
+
+  addMap() {
+    const mapWrap = this.createElement("div", "map-wrapper", this.wrapper);
+    this.createControlPanel(mapWrap, "map");
+    this.map = this.createElement("div", "map", mapWrap);
+    this.map.id = "map";
+  }
+
+  createCheckbox(parrent, name, text, id) {
+    const wrap = this.createElement("div", "checkbox-item__wrapper", parrent);
+
+    const checkbox = this.createElement("input", name, wrap);
+    checkbox.type = "checkbox";
+    checkbox.id = id + name;
+    checkbox.name = id + name;
+    const label = this.createElement("label", name + "_label", wrap, text);
+    label.htmlFor = id + name;
+
+    return checkbox;
+  }
   addCovidTable() {
-    //this.wrapper = this.createElement("div", "wrapper", document.body);
     const covidTable = this.createElement(
       "div",
       "covid-table",
       this.wrapperData
     );
-    /*const covidTableCity = this.createElement(
-      "div",
-      "covid-table__city",
-      covidTable,
-      "[Enter City]"
-    );*/
 
-    //создаем даталист
     this.addCountrySearch(covidTable, "country-search__table");
-    /*this.covidTableCityInput = document.createElement("input");
-    this.covidTableCityInput.setAttribute("list", "city-list");
-    covidTable.appendChild(this.covidTableCityInput);
-    //<datalist id="my-list"></datalist>
-    const covidTableCityDatalist = document.createElement("datalist");
-    covidTableCityDatalist.id = "city-list";
-    covidTable.appendChild(covidTableCityDatalist);*/
 
-    /*covidTableCity.addEventListener("keypress", this.setCountry);
-    covidTableCity.addEventListener("click", this.clickCountry);
-    covidTableCity.addEventListener("blur", this.setCountry);*/
-    //covidTableCity.contentEditable = true;
-    //<div class="city" contenteditable="true">
     const checkbxWrap = this.createElement(
       "div",
       "checkbox__wrapper",
       covidTable
     );
-    const LastDayWrap = this.createElement(
+
+    const checkboxLastDay = this.createCheckbox(
+      checkbxWrap,
+      "checkbox__last-day",
+      "New cases (За последние сутки)",
+      "table-"
+    );
+    /*const LastDayWrap = this.createElement(
       "div",
       "checkbox-item__wrapper",
       checkbxWrap
@@ -80,10 +98,16 @@ export default class View {
       LastDayWrap,
       "New cases (За последние сутки)"
     );
-    label.htmlFor = "checkbox__last-day";
-    //this.checkboxLastDay.addEventListener("click", switchLastDay);
+    label.htmlFor = "checkbox__last-day";*/
 
-    const OneHundThousDayWrap = this.createElement(
+    const checkboxOneHundThous = this.createCheckbox(
+      checkbxWrap,
+      "checkbox__one-hundr-thous",
+      "100 000 population cases (На 100 000 населения)",
+      "table-"
+    );
+
+    /*const OneHundThousDayWrap = this.createElement(
       "div",
       "checkbox-item__wrapper",
       checkbxWrap
@@ -97,14 +121,14 @@ export default class View {
     this.checkboxOneHundThous.type = "checkbox";
     this.checkboxOneHundThous.id = "checkbox__one-hundr-thous";
     this.checkboxOneHundThous.name = "checkbox__one-hundr-thous";
-    label = this.createElement(
+    let label = this.createElement(
       "label",
       "checkbox__one-hundr-thous_label",
       OneHundThousDayWrap,
       "100 000 population cases (На 100 000 населения)"
     );
-    label.htmlFor = "checkbox__one-hundr-thous";
-    //this.checkboxOneHundThous.addEventListener("click", switchOneHundThous);
+    label.htmlFor = "checkbox__one-hundr-thous";*/
+
     this.covidTableData = this.createElement(
       "div",
       "covid-table__data",
@@ -113,7 +137,7 @@ export default class View {
   }
 
   addCovidTableData(confirmed, deaths, recovered) {
-    this.covidTableData.innerHTML = "";
+    this.clearDOMItem(this.covidTableData);
     let covidTableItem = this.createElement(
       "div",
       "covid-table__item",
@@ -158,18 +182,70 @@ export default class View {
       "search-country",
       parent
     );
-    //document.createElement("input");
+    covidTableCityInput.value = "[Enter city]";
+
     covidTableCityInput.setAttribute("list", idName);
-    //parent.appendChild(covidTableCityInput);
-    //<datalist id="my-list"></datalist>
     const covidTableCityDatalist = this.createElement(
       "datalist",
       "",
       covidTableCityInput
     );
-    //document.createElement("datalist");
     covidTableCityDatalist.id = idName;
-    //covidTable.appendChild(covidTableCityDatalist);
+  }
+
+  createControlPanel(parrent, id) {
+    const controlPanel = this.createElement("div", "list-control", parrent);
+    this.createCheckbox(
+      controlPanel,
+      "checkbox__one-hundr-thous",
+      "100 000 population cases (На 100 000 населения)",
+      id
+    );
+
+    const selectListData = this.createElement(
+      "select",
+      id + "__select select-data",
+      controlPanel
+    );
+    let options = this.createElement(
+      "option",
+      id + "__select",
+      selectListData,
+      "Total confirmed"
+    );
+    options.selected = "selected";
+    options = this.createElement(
+      "option",
+      id + "__select",
+      selectListData,
+      "Total death"
+    );
+    options = this.createElement(
+      "option",
+      id + "__select",
+      selectListData,
+      "Total recovered"
+    );
+    options = this.createElement(
+      "option",
+      id + "__select",
+      selectListData,
+      "New confirmed"
+    );
+    options = this.createElement(
+      "option",
+      id + "__select",
+      selectListData,
+      "New death"
+    );
+    options = this.createElement(
+      "option",
+      id + "__select",
+      selectListData,
+      "New recovered"
+    );
+    //создаем даталист поиска страны
+    this.addCountrySearch(controlPanel, id + "__country-search");
   }
 
   addCovidList() {
@@ -178,11 +254,18 @@ export default class View {
       "list-wrapper",
       this.wrapperData
     );
+    this.createControlPanel(covidListWrapper, "covid-list");
 
-    const covidListControl = this.createElement(
+    /*const covidListControl = this.createElement(
       "div",
       "list-control",
       covidListWrapper
+    );
+    this.createCheckbox(
+      covidListControl,
+      "checkbox__one-hundr-thous",
+      "100 000 population cases (На 100 000 населения)",
+      "list-"
     );
 
     this.selectListData = this.createElement(
@@ -228,21 +311,9 @@ export default class View {
       "New recovered"
     );
     //создаем даталист поиска страны
-    this.addCountrySearch(covidListControl, "country-search__list");
+    this.addCountrySearch(covidListControl, "country-search__list");*/
 
     this.covidList = this.createElement("ul", "covid-list", covidListWrapper);
-
-    /*console.log(listData);
-    listData.forEach((item) => {
-      const covidItem = this.createElement("li", "covid-item", covidList);
-      this.createElement("span", "covid-item__name", covidItem, item.Country);
-      this.createElement(
-        "span",
-        "covid-item__data",
-        covidItem,
-        item.TotalConfirmed
-      );
-    });*/
   }
 
   clearDOMItem(item) {

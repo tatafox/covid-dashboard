@@ -2,7 +2,7 @@ let currentCountry;
 let setCountryFlag = false;
 
 function setCountry(e, dataCovidCountry) {
-  //console.log(e.target.value);
+  //console.log(e.path[0]);
   const dataList = e.path[0].children[0]; //document.getElementById("city-list");
   setCountryFlag = false;
   if (
@@ -50,7 +50,10 @@ function clickCountry(e) {
 }
 
 function setDefault(e, dataList) {
-  e.target.value = "[Enter city]";
+  document
+    .querySelectorAll(".search-country")
+    .forEach((item) => (item.value = "[Enter city]"));
+  //e.target.value = "[Enter city]";
   currentCountry = "";
   dataList.innerHTML = "";
   e.target.blur();
