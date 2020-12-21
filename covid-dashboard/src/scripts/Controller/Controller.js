@@ -13,6 +13,10 @@ import {
   createPolygonSeries,
   delPolygonSeries,
   createTooltipText,
+  zoomCountry,
+  zoomOut,
+  polygonSeries,
+  polygonTemplate,
 } from "./chartMap.js";
 
 import Diagram from "./diagramChart.js";
@@ -169,6 +173,7 @@ export default class Controller {
   setCheckbox() {
     const dataForDOM = !this.country ? this.dataCovidGlobal : this.country;
     this.changeCovidTableData(dataForDOM, POPULATIONOFEARTH);
+    delPolygonSeries();
     this.updateMap();
     this.setCovidDataList();
     this.country
@@ -177,8 +182,22 @@ export default class Controller {
   }
 
   updateMap() {
-    delPolygonSeries();
+    //delPolygonSeries();
     createPolygonSeries(this.dataMap);
+    polygonTemplate.events.on("hit", (ev) => {
+      console.log(ev, ev.target.dataItem._dataContext.id);
+      //zoomCountry(ev.target);
+      this.country = this.dataCovidCountry.find(
+        (item) => item.countryInfo.iso2 === ev.target.dataItem._dataContext.id
+      );
+      console.log(this.country);
+
+      document
+        .querySelectorAll(".search-country")
+        .forEach((item) => (item.value = this.country.country));
+      this.updateCounty();
+      // ev.target.dataItem.dataContext.name +
+    });
     createTooltipText(
       this.switchCovidData(),
       this.dataMap,
@@ -192,6 +211,7 @@ export default class Controller {
     //document.getElementById("map").innerHTML = "";
     //initChartMap();
     //const dataMap = this.createDataArray();
+    delPolygonSeries();
     this.updateMap();
     /*delPolygonSeries();
     createPolygonSeries(this.dataMap);
@@ -277,6 +297,7 @@ export default class Controller {
   }
 
   updateCounty() {
+    zoomCountry(polygonSeries.getPolygonById(this.country.countryInfo.iso2));
     //получаем популяцию страны
     this.setCovidDataList();
     this.changeCovidTableData(this.country, this.country.population);
@@ -288,6 +309,7 @@ export default class Controller {
     this.changeCovidTableData(this.dataCovidGlobal, POPULATIONOFEARTH);
     this.setCovidDataList();
     this.updateDiagram(this.dataHistoricalAll);
+    zoomOut();
   }
 
   /*searchCountryData(countryCode) {
@@ -311,8 +333,9 @@ export default class Controller {
     this.covidList = this.view.covidList;
     this.setCovidDataList();
     this.dataMap = this.createDataArray();
-    createPolygonSeries(this.dataMap);
-    createTooltipText("TotalConfirmed", this.dataMap);
+    this.updateMap();
+    //createPolygonSeries(this.dataMap);
+    //createTooltipText("TotalConfirmed", this.dataMap);
 
     //this.addMapMarker();
   }

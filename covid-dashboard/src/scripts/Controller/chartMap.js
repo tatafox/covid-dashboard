@@ -77,6 +77,7 @@ function createPolygonSeries(data) {
 
   polygonSeries.data = data;
   polygonTemplate.dataItem = data;
+  return polygonTemplate;
   //polygonSeries.tooltipDataItem = data;
   // Bind "fill" property to "fill" key in data
   //polygonTemplate.propertyFields.fill = "fill";
@@ -125,10 +126,29 @@ function createTooltipText(type, dataMap, flag100) {
   //polygonSeries.dispose();
 }
 
+// rotate and zoom
+function zoomCountry(mapPolygon) {
+  console.log(mapPolygon);
+  chart.zoomToMapObject(mapPolygon, getZoomLevel(mapPolygon));
+}
+
+function zoomOut() {
+  chart.goHome();
+}
+
+function getZoomLevel(mapPolygon) {
+  const w = mapPolygon.polygon.bbox.width;
+  const h = mapPolygon.polygon.bbox.width;
+  return Math.min(chart.seriesWidth / (w * 2), chart.seriesHeight / (h * 2));
+}
+
 export {
   initChartMap,
   createPolygonSeries,
   delPolygonSeries,
   createTooltipText,
+  zoomCountry,
+  zoomOut,
+  polygonSeries,
   polygonTemplate,
 };
