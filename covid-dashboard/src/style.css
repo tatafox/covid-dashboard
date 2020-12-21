@@ -134,6 +134,7 @@ h1 {
   justify-content: space-between;
   padding: 5px;
   background-color: #f5fdff;
+  cursor: pointer;
 }
 
 
@@ -208,7 +209,7 @@ h1 {
   background-color: #adf3ff;
   /* align-content: flex-start; */
   /* align-items: center; */
-  justify-content: flex-start;
+  justify-content: flex-end;
   margin-bottom: 5px;
   /* justify-items: right; */
   /* justify-self: baseline;*/

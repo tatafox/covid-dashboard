@@ -94,6 +94,9 @@ export default class Controller {
   setCovidDataList() {
     const dataArray = [];
     this.view.clearDOMItem(this.view.covidList);
+    document.querySelectorAll(".covid-item").forEach((item) => {
+      item.removeEventListener("click");
+    });
     this.dataCovidCountry.forEach((item) => {
       //const findCountry = this.searchCountryData(item.CountryCode);
       //console.log(findCountry);
@@ -119,7 +122,33 @@ export default class Controller {
         this.view.createListItem(item[0], item[1], item[2]);
       });
     }
+    document.querySelectorAll(".covid-item").forEach((item) => {
+      item.addEventListener("click", (e) => this.setCountryClick(e));
+    });
   }
+
+  setCountryClick(e) {
+    //console.log(e);
+    const country =
+      e.target.localName === "li"
+        ? e.target.children[1].innerText
+        : e.path[1].children[1].textContent;
+    //console.log(country); //, e.target, e.target.children[1].innerText);
+    console.log(
+      this.dataCovidCountry.find(
+        (item) => item.country.toLowerCase() === country.toLowerCase()
+      )
+    );
+    this.country = this.dataCovidCountry.find(
+      (item) => item.country.toLowerCase() === country.toLowerCase()
+    );
+    document
+      .querySelectorAll(".search-country")
+      .forEach((item) => (item.value = this.country.country));
+    this.updateCounty();
+  }
+
+  updateData() {}
 
   setCheckboxLastDay() {
     this.checkboxLastDay = !this.checkboxLastDay;
@@ -239,19 +268,26 @@ export default class Controller {
     type === "set" ? setCountry(e, this.dataCovidCountry) : clickCountry(e);
     if (setCountryFlag) {
       if (!currentCountry) {
-        this.country = "";
-        this.changeCovidTableData(this.dataCovidGlobal, POPULATIONOFEARTH);
-        this.setCovidDataList();
-        this.updateDiagram(this.dataHistoricalAll);
+        this.resetCounty();
       } else {
         this.country = currentCountry[0];
-        console.log(this.country);
-        //получаем популяцию страны
-        this.setCovidDataList();
-        this.changeCovidTableData(this.country, this.country.population);
-        this.getCovidHistoricalCountryData();
+        this.updateCounty();
       }
     }
+  }
+
+  updateCounty() {
+    //получаем популяцию страны
+    this.setCovidDataList();
+    this.changeCovidTableData(this.country, this.country.population);
+    this.getCovidHistoricalCountryData();
+  }
+
+  resetCounty() {
+    this.country = "";
+    this.changeCovidTableData(this.dataCovidGlobal, POPULATIONOFEARTH);
+    this.setCovidDataList();
+    this.updateDiagram(this.dataHistoricalAll);
   }
 
   /*searchCountryData(countryCode) {
