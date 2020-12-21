@@ -188,20 +188,28 @@ h1 {
 
 .diagram-wrapper .list-control .search-country {
   align-self: auto;
-  background-color: #15B2D6;
+  background-color: #adf3ff;
+  margin-left: 25px;
+}
+
+.diagram-wrapper .list-control .checkbox-item__wrapper {
+  max-width: 300px;
+  margin: 5px 25px;
 }
 
 .diagram-wrapper .list-control {
-  z-index: 10;
-  position: absolute;
+  /*z-index: 10;
+
+   position: absolute; */
   /* left: 50px; */
-  right: 320px;
-  bottom: 85px;
-  width: 500px;
-  background-color: #15B2D6;
+  /* right: 320px; */
+  /* bottom: 85px; */
+  /* width: 500px; */
+  background-color: #adf3ff;
   /* align-content: flex-start; */
   /* align-items: center; */
-  justify-content: space-between;
+  justify-content: flex-start;
+  margin-bottom: 5px;
   /* justify-items: right; */
   /* justify-self: baseline;*/
 }

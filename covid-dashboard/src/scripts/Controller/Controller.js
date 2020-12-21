@@ -25,6 +25,7 @@ export default class Controller {
     this.dataCovidCountry = {};
     this.dataCovidGlobal = {};
     this.dataHistoricalAll = {};
+    this.dataHistoricalCountry = {};
     this.checkboxLastDay = false;
     this.checkboxOneHundThous = false;
     //this.covidTableData;
@@ -97,10 +98,11 @@ export default class Controller {
       //const findCountry = this.searchCountryData(item.CountryCode);
       //console.log(findCountry);
       let data = this.switchCovidData(item);
+      const population = !item.population ? 100000 : item.population;
 
       data = !this.checkboxOneHundThous
         ? data
-        : Math.round((data * 10000000) / item.population) / 100;
+        : Math.round((data * 10000000) / population) / 100;
 
       const arrayRow = [item.country, data, item.countryInfo.flag];
       dataArray.push(arrayRow);
@@ -140,6 +142,9 @@ export default class Controller {
     this.changeCovidTableData(dataForDOM, POPULATIONOFEARTH);
     this.updateMap();
     this.setCovidDataList();
+    this.country
+      ? this.updateDiagram(this.dataHistoricalCountry)
+      : this.updateDiagram(this.dataHistoricalAll);
   }
 
   updateMap() {
@@ -166,28 +171,65 @@ export default class Controller {
       this.dataMap,
       this.checkboxOneHundThous
     );*/
+
+    this.country
+      ? this.updateDiagram(this.dataHistoricalCountry)
+      : this.updateDiagram(this.dataHistoricalAll);
   }
 
-  switchCovidData(item) {
+  updateDiagram(currentData) {
+    this.diagram.clear();
+    let population = this.country ? this.country.population : POPULATIONOFEARTH;
+    population = this.checkboxOneHundThous ? population : 0;
+    const data = this.switchCovidData(currentData, true, population);
+    console.log(data);
+    this.diagram.createDiagram(data);
+  }
+
+  switchCovidData(item, flagDiagram, population) {
     let data;
     switch (this.dataType) {
       case "Total death":
-        data = !item ? "TotalDeaths" : item.deaths;
+        if (flagDiagram) {
+          data = this.getDiagramData(item.deaths, false, population);
+        } else {
+          data = !item ? "TotalDeaths" : item.deaths;
+        }
         break;
       case "Total recovered":
-        data = !item ? "TotalRecovered" : item.recovered;
+        if (flagDiagram) {
+          data = this.getDiagramData(item.recovered, false, population);
+        } else {
+          data = !item ? "TotalRecovered" : item.recovered;
+        }
         break;
       case "New confirmed":
-        data = !item ? "NewConfirmed" : item.todayCases;
+        if (flagDiagram) {
+          data = this.getDiagramData(item.cases, true, population);
+        } else {
+          data = !item ? "NewConfirmed" : item.todayCases;
+        }
         break;
       case "New death":
-        data = !item ? "NewDeaths" : item.todayDeaths;
+        if (flagDiagram) {
+          data = this.getDiagramData(item.deaths, true, population);
+        } else {
+          data = !item ? "NewDeaths" : item.todayDeaths;
+        }
         break;
       case "New recovered":
-        data = !item ? "NewRecovered" : item.todayRecovered;
+        if (flagDiagram) {
+          data = this.getDiagramData(item.recovered, true, population);
+        } else {
+          data = !item ? "NewRecovered" : item.todayRecovered;
+        }
         break;
       default:
-        data = !item ? "TotalConfirmed" : item.cases;
+        if (flagDiagram) {
+          data = this.getDiagramData(item.cases, false, population);
+        } else {
+          data = !item ? "TotalConfirmed" : item.cases;
+        }
         break;
     }
     return data;
@@ -200,12 +242,14 @@ export default class Controller {
         this.country = "";
         this.changeCovidTableData(this.dataCovidGlobal, POPULATIONOFEARTH);
         this.setCovidDataList();
+        this.updateDiagram(this.dataHistoricalAll);
       } else {
         this.country = currentCountry[0];
         console.log(this.country);
         //получаем популяцию страны
         this.setCovidDataList();
         this.changeCovidTableData(this.country, this.country.population);
+        this.getCovidHistoricalCountryData();
       }
     }
   }
@@ -239,20 +283,36 @@ export default class Controller {
 
   async getCovidHistoricalAllData() {
     this.dataHistoricalAll = await this.model.getCovidHistoricalAllData();
-    console.log(this.dataHistoricalAll.cases);
+    const data = this.getDiagramData(this.dataHistoricalAll.cases, false);
+
+    this.diagram.createDiagram(data);
+  }
+
+  async getCovidHistoricalCountryData() {
+    this.dataHistoricalCountry = await this.model.getCovidHistoricalCountryData(
+      this.country.countryInfo.iso2
+    );
+    console.log(this.dataHistoricalCountry);
+    this.updateDiagram(this.dataHistoricalCountry);
+  }
+
+  getDiagramData(dataObject, newFlag, population) {
     const data = [];
-    for (const [key, valueData] of Object.entries(
-      this.dataHistoricalAll.cases
-    )) {
+    let prev = 0;
+    for (const [key, valueData] of Object.entries(dataObject)) {
+      const currentValue = population
+        ? Math.round((((valueData - prev) * 100000) / population) * 100) / 100
+        : valueData - prev;
       const obj = {
         date: key,
-        value: valueData,
+        value: currentValue,
       };
       data.push(obj);
-      console.log(`${key}: ${valueData}`);
+      prev = newFlag ? valueData : 0;
+      //console.log(`${key}: ${valueData}`);
     }
-    console.log(data);
-    this.diagram.createDiagram(data);
+    //console.log(data);
+    return data;
   }
 
   createDataArray() {
@@ -291,7 +351,7 @@ export default class Controller {
       : dataCovid.recovered;
     console.log(this.checkboxLastDay, dataCovid.recovered);
 
-    population = population / 100000;
+    population = !population ? 1 : population / 100000;
 
     if (this.checkboxOneHundThous) {
       confirmed = Math.round((confirmed / population) * 100) / 100;

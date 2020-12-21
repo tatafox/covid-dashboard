@@ -57,7 +57,7 @@ function delPolygonSeries() {
 function createPolygonSeries(data) {
   // Create map polygon series
   polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
-  polygonSeries.calculateVisualCenter = true;
+  // polygonSeries.calculateVisualCenter = true;
   polygonSeries.useGeodata = true;
 
   // Exclude Antarctica

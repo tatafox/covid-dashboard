@@ -79,6 +79,22 @@ export default class Model {
     }
     return dataCountry;
   }
+
+  async getCovidHistoricalCountryData(country) {
+    this.loadingCountry = true;
+    let dataCountry;
+    try {
+      const urlCountry = `https://disease.sh/v3/covid-19/historical/${country}?lastdays=366`;
+      const resCountry = await fetch(urlCountry);
+      dataCountry = await resCountry.json();
+    } catch (e) {
+      console.log("ошибка");
+    } finally {
+      this.loadingCountry = false;
+    }
+    //console.log(dataCountry.timeline);
+    return dataCountry.timeline;
+  }
 }
 
 /*async getReverseGeocod(lat,lng) {
