@@ -151,7 +151,8 @@ h1 {
 
 #map {
   width: calc(100vw - 300px);
-  height: 100%;
+  height: calc(100vh - 360px);
+  /*height: 100%;*/
   background: aliceblu
     /* width: 1500px;
   height: 800px;*/
@@ -174,7 +175,35 @@ h1 {
   /* align-items: center; */
   justify-content: space-between;
   /* justify-items: right; */
-  /* justify-self: baseline;
+  /* justify-self: baseline;*/
+}
+
+.diagram-wrapper {
+  background-color: aliceblue;
+}
+
+#diagram {
+  height: 250px;
+}
+
+.diagram-wrapper .list-control .search-country {
+  align-self: auto;
+  background-color: #15B2D6;
+}
+
+.diagram-wrapper .list-control {
+  z-index: 10;
+  position: absolute;
+  /* left: 50px; */
+  right: 320px;
+  bottom: 85px;
+  width: 500px;
+  background-color: #15B2D6;
+  /* align-content: flex-start; */
+  /* align-items: center; */
+  justify-content: space-between;
+  /* justify-items: right; */
+  /* justify-self: baseline;*/
 }
 
 /*position: absolute;
@@ -185,7 +214,7 @@ height: 100%;
 z-index: 1000;
 background: aliceblue;*/
 
-  .covid-map__img {
-    width: 1535px;
-    overflow: hidden;
-  }
+.covid-map__img {
+  width: 1535px;
+  overflow: hidden;
+}

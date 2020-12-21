@@ -15,6 +15,8 @@ import {
   createTooltipText,
 } from "./chartMap.js";
 
+import Diagram from "./diagramChart.js";
+
 export default class Controller {
   constructor(view, model) {
     this.view = view;
@@ -22,24 +24,27 @@ export default class Controller {
 
     this.dataCovidCountry = {};
     this.dataCovidGlobal = {};
-    this.dataCountry = {};
+    this.dataHistoricalAll = {};
     this.checkboxLastDay = false;
     this.checkboxOneHundThous = false;
-    this.covidTableData;
+    //this.covidTableData;
     this.country;
     this.covidList;
     this.dataType;
     this.dataMap;
-
+    this.diagram = new Diagram();
     this.init();
   }
 
   init() {
-    this.getCountryData();
+    //this.getCountryData();
+
     this.getCovidData();
 
     this.view.addCovidTable();
     this.view.addCovidList();
+
+    this.getCovidHistoricalAllData();
 
     initChartMap();
 
@@ -85,27 +90,26 @@ export default class Controller {
     });
   }*/
 
-  setCovidDataList(countrySearch) {
+  setCovidDataList() {
     const dataArray = [];
-    this.view.clearDOMItem(this.covidList);
+    this.view.clearDOMItem(this.view.covidList);
     this.dataCovidCountry.forEach((item) => {
-      const findCountry = this.searchCountryData(item.CountryCode);
+      //const findCountry = this.searchCountryData(item.CountryCode);
       //console.log(findCountry);
-      const flagSrc = !findCountry ? "" : findCountry.flag;
-
       let data = this.switchCovidData(item);
 
-      const population = !findCountry ? 0 : findCountry.population;
       data = !this.checkboxOneHundThous
         ? data
-        : Math.round((data * 10000000) / findCountry.population) / 100;
+        : Math.round((data * 10000000) / item.population) / 100;
 
-      const arrayRow = [item.Country, data, flagSrc];
+      const arrayRow = [item.country, data, item.countryInfo.flag];
       dataArray.push(arrayRow);
       //this.view.createListItem(item.Country, data, flagSrc);
     });
-    if (countrySearch) {
-      const countryList = dataArray.find((item) => item[0] === countrySearch);
+    if (this.country) {
+      const countryList = dataArray.find(
+        (item) => item[0] === this.country.country
+      );
       this.view.createListItem(countryList[0], countryList[1], countryList[2]);
     } else {
       dataArray.sort((a, b) => b[1] - a[1]);
@@ -119,7 +123,7 @@ export default class Controller {
     this.checkboxLastDay = !this.checkboxLastDay;
     this.setCheckbox();
     document.querySelectorAll(".checkbox__last-day").forEach((item) => {
-      item.checked = this.checkboxOneHundThous;
+      item.checked = this.checkboxLastDay;
     });
   }
 
@@ -132,7 +136,6 @@ export default class Controller {
   }
 
   setCheckbox() {
-    console.log("df");
     const dataForDOM = !this.country ? this.dataCovidGlobal : this.country;
     this.changeCovidTableData(dataForDOM, POPULATIONOFEARTH);
     this.updateMap();
@@ -169,58 +172,61 @@ export default class Controller {
     let data;
     switch (this.dataType) {
       case "Total death":
-        data = !item ? "TotalDeaths" : item.TotalDeaths;
+        data = !item ? "TotalDeaths" : item.deaths;
         break;
       case "Total recovered":
-        data = !item ? "TotalRecovered" : item.TotalRecovered;
+        data = !item ? "TotalRecovered" : item.recovered;
         break;
       case "New confirmed":
-        data = !item ? "NewConfirmed" : item.NewConfirmed;
+        data = !item ? "NewConfirmed" : item.todayCases;
         break;
       case "New death":
-        data = !item ? "NewDeaths" : item.NewDeaths;
+        data = !item ? "NewDeaths" : item.todayDeaths;
         break;
       case "New recovered":
-        data = !item ? "NewRecovered" : item.NewRecovered;
+        data = !item ? "NewRecovered" : item.todayRecovered;
         break;
       default:
-        data = !item ? "TotalConfirmed" : item.TotalConfirmed;
+        data = !item ? "TotalConfirmed" : item.cases;
         break;
     }
     return data;
   }
 
   changeCounty(e, type) {
-    console.log("sd");
     type === "set" ? setCountry(e, this.dataCovidCountry) : clickCountry(e);
     if (setCountryFlag) {
       if (!currentCountry) {
+        this.country = "";
         this.changeCovidTableData(this.dataCovidGlobal, POPULATIONOFEARTH);
         this.setCovidDataList();
-        this.country = "";
       } else {
         this.country = currentCountry[0];
+        console.log(this.country);
         //получаем популяцию страны
-        const findCountry = this.searchCountryData(this.country.CountryCode);
-        this.setCovidDataList(this.country.Country);
-        console.log(findCountry); //flag
-        this.changeCovidTableData(this.country, findCountry.population);
+        this.setCovidDataList();
+        this.changeCovidTableData(this.country, this.country.population);
       }
     }
   }
 
-  searchCountryData(countryCode) {
+  /*searchCountryData(countryCode) {
     return this.dataCountry.find((item) => item.alpha2Code === countryCode);
-  }
+  }*/
 
   async getCovidData() {
-    const data = await this.model.getCovidData();
-    this.dataCovidCountry = data.Countries;
-    this.dataCovidGlobal = data.Global;
+    this.dataCovidGlobal = await this.model.getCovidClobalData();
+    console.log(this.dataCovidGlobal);
+    this.dataCovidCountry = await this.model.getCovidCountryData();
+    console.log(this.dataCovidCountry);
+
+    //const data = await this.model.getCovidData();
+    //this.dataCovidCountry = data.Countries;
+    //this.dataCovidGlobal = data.Global;
     this.view.addCovidTableData(
-      this.dataCovidGlobal.TotalConfirmed,
-      this.dataCovidGlobal.TotalDeaths,
-      this.dataCovidGlobal.TotalRecovered
+      this.dataCovidGlobal.cases,
+      this.dataCovidGlobal.deaths,
+      this.dataCovidGlobal.recovered
     );
     this.covidList = this.view.covidList;
     this.setCovidDataList();
@@ -231,46 +237,59 @@ export default class Controller {
     //this.addMapMarker();
   }
 
+  async getCovidHistoricalAllData() {
+    this.dataHistoricalAll = await this.model.getCovidHistoricalAllData();
+    console.log(this.dataHistoricalAll.cases);
+    const data = [];
+    for (const [key, valueData] of Object.entries(
+      this.dataHistoricalAll.cases
+    )) {
+      const obj = {
+        date: key,
+        value: valueData,
+      };
+      data.push(obj);
+      console.log(`${key}: ${valueData}`);
+    }
+    console.log(data);
+    this.diagram.createDiagram(data);
+  }
+
   createDataArray() {
     const data = [];
     this.dataCovidCountry.forEach((item) => {
-      const findCountry = this.searchCountryData(item.CountryCode);
       const obj = {
-        id: item.CountryCode,
-        population: findCountry.population,
-        TotalConfirmed: item.TotalConfirmed,
-        TotalDeaths: item.TotalDeaths,
-        TotalRecovered: item.TotalRecovered,
-        NewConfirmed: item.NewConfirmed,
-        NewDeaths: item.NewDeaths,
-        NewRecovered: item.NewRecovered,
+        id: item.countryInfo.iso2,
+        population: item.population,
+        TotalConfirmed: item.cases,
+        TotalDeaths: item.deaths,
+        TotalRecovered: item.recovered,
+        NewConfirmed: item.todayCases,
+        NewDeaths: item.todayDeaths,
+        NewRecovered: item.todayRecovered,
       };
       data.push(obj);
     });
     return data;
   }
 
-  async getCountryData() {
+  /*async getCountryData() {
     this.dataCountry = await this.model.getCountryData();
     console.log(this.dataCountry);
-  }
+  }*/
 
   changeCovidTableData(dataCovid, population) {
-    /*let confirmed, deaths, recovered;
-    if (this.checkboxLastDay) {
-      confirmed = dataCovid.NewConfirmed;
-      deaths = dataCovid.NewDeaths;
-      recovered = dataCovid.NewRecovered;
-    } else {
-      confirmed = dataCovid.TotalConfirmed;
-      deaths = dataCovid.TotalDeaths;
-      recovered = dataCovid.TotalRecovered;
-    }*/
-    const type = this.checkboxLastDay ? "New" : "Total";
-
-    let confirmed = dataCovid[`${type}Confirmed`];
-    let deaths = dataCovid[`${type}Deaths`];
-    let recovered = dataCovid[`${type}Recovered`];
+    console.log(dataCovid);
+    let confirmed = this.checkboxLastDay
+      ? dataCovid.todayCases
+      : dataCovid.cases;
+    let deaths = this.checkboxLastDay
+      ? dataCovid.todayDeaths
+      : dataCovid.deaths;
+    let recovered = this.checkboxLastDay
+      ? dataCovid.todayRecovered
+      : dataCovid.recovered;
+    console.log(this.checkboxLastDay, dataCovid.recovered);
 
     population = population / 100000;
 

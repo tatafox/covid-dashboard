@@ -15,16 +15,16 @@ function setCountry(e, dataCovidCountry) {
     } else {
       //console.log(e.target.value);
       currentCountry = dataCovidCountry.filter(
-        (item) => item.Country.toLowerCase() === e.target.value.toLowerCase()
+        (item) => item.country.toLowerCase() === e.target.value.toLowerCase()
       );
       //console.log(currentCountry);
       if (!currentCountry || currentCountry.length === 0) {
         setDefault(e, dataList);
       } else {
-        e.target.value = currentCountry[0].Country;
+        e.target.value = currentCountry[0].country;
         document
           .querySelectorAll(".search-country")
-          .forEach((item) => (item.value = currentCountry[0].Country));
+          .forEach((item) => (item.value = currentCountry[0].country));
       }
       e.target.blur();
     }
@@ -35,11 +35,12 @@ function setCountry(e, dataCovidCountry) {
         ? e.target.value.slice(0, -1)
         : e.target.value + e.key;
     const searchArray = dataCovidCountry.filter(
-      (item) => item.Slug.indexOf(searchValue.toLowerCase()) !== -1
+      (item) =>
+        item.country.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
     );
     searchArray.forEach((item) => {
       const optionHTML = document.createElement("option");
-      optionHTML.setAttribute("value", item.Country);
+      optionHTML.setAttribute("value", item.country);
       dataList.appendChild(optionHTML);
     });
   }

@@ -3,7 +3,9 @@ export default class View {
     this.covidList;
     this.selectListData;
     this.map;
+    this.diagram;
     this.wrapper;
+    this.chartWrapper;
     this.wrapperData;
     this.init();
   }
@@ -21,8 +23,14 @@ export default class View {
     this.createElement("h1", "header__title", header, "COVID-19 Dashboard");
     const main = this.createElement("main", "main", document.body);
     this.wrapper = this.createElement("div", "wrapper", main);
+    this.chartWrapper = this.createElement(
+      "div",
+      "chart__wrapper",
+      this.wrapper
+    );
     this.wrapperData = this.createElement("div", "data-wrapper", this.wrapper);
     this.addMap();
+    this.addDiagram();
     this.createFooter();
   }
 
@@ -39,8 +47,19 @@ export default class View {
     footerIMG.src = `https://rs.school/images/rs_school_js.svg`;
   }
 
+  addDiagram() {
+    const diagramWrap = this.createElement(
+      "div",
+      "diagram-wrapper",
+      this.chartWrapper
+    );
+    this.createControlPanel(diagramWrap, "map");
+    this.diagram = this.createElement("div", "diagram", diagramWrap);
+    this.diagram.id = "diagram";
+  }
+
   addMap() {
-    const mapWrap = this.createElement("div", "map-wrapper", this.wrapper);
+    const mapWrap = this.createElement("div", "map-wrapper", this.chartWrapper);
     this.createControlPanel(mapWrap, "map");
     this.map = this.createElement("div", "map", mapWrap);
     this.map.id = "map";

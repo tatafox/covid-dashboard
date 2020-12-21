@@ -34,6 +34,51 @@ export default class Model {
     }
     return dataCountry;
   }
+
+  async getCovidClobalData() {
+    this.loadingCountry = true;
+    let dataCountry;
+    try {
+      const urlCountry = `https://disease.sh/v3/covid-19/all`;
+      const resCountry = await fetch(urlCountry);
+      dataCountry = await resCountry.json();
+    } catch (e) {
+      console.log("ошибка");
+    } finally {
+      this.loadingCountry = false;
+    }
+    return dataCountry;
+  }
+
+  async getCovidCountryData() {
+    this.loadingCountry = true;
+    let dataCountry;
+    try {
+      const urlCountry = `https://disease.sh/v3/covid-19/countries`;
+      const resCountry = await fetch(urlCountry);
+      dataCountry = await resCountry.json();
+    } catch (e) {
+      console.log("ошибка");
+    } finally {
+      this.loadingCountry = false;
+    }
+    return dataCountry;
+  }
+
+  async getCovidHistoricalAllData() {
+    this.loadingCountry = true;
+    let dataCountry;
+    try {
+      const urlCountry = `https://disease.sh/v3/covid-19/historical/all?lastdays=366`;
+      const resCountry = await fetch(urlCountry);
+      dataCountry = await resCountry.json();
+    } catch (e) {
+      console.log("ошибка");
+    } finally {
+      this.loadingCountry = false;
+    }
+    return dataCountry;
+  }
 }
 
 /*async getReverseGeocod(lat,lng) {
