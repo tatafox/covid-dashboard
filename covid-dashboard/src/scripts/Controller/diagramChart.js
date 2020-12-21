@@ -83,7 +83,7 @@ export default class Diagram {
     this.chart.cursor = new am4charts.XYCursor();
 
     // Add simple vertical scrollbar
-    this.chart.scrollbarY = new am4core.Scrollbar();
+    //this.chart.scrollbarY = new am4core.Scrollbar();
 
     // Add horizotal scrollbar with preview
     /* const scrollbarX = new am4charts.XYChartScrollbar();

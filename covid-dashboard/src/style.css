@@ -56,7 +56,7 @@ h1 {
 }
 
 .data-wrapper {
-  max-width: 300px;
+  width: 300px;
 }
 
 .covid-table {
@@ -69,9 +69,9 @@ h1 {
 }
 
 .checkbox-item__wrapper {
-  max-width: 140px;
+  /*max-width: 140px;*/
   font-size: 14px;
-  margin: 15px 5px;
+  margin: 10px 5px;
 }
 
 .covid-table__item {
@@ -80,6 +80,11 @@ h1 {
   padding: 5px 10px;
   background-color: #15B2D6;
   color: white
+}
+
+.control__wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
 .search-country {
@@ -152,7 +157,7 @@ h1 {
 
 #map {
   width: calc(100vw - 300px);
-  height: calc(100vh - 360px);
+  height: calc(100vh - 370px);
   /*height: 100%;*/
   background: aliceblu
     /* width: 1500px;
@@ -184,7 +189,7 @@ h1 {
 }
 
 #diagram {
-  height: 250px;
+  height: 220px;
 }
 
 .diagram-wrapper .list-control .search-country {
@@ -223,7 +228,99 @@ height: 100%;
 z-index: 1000;
 background: aliceblue;*/
 
-.covid-map__img {
-  width: 1535px;
-  overflow: hidden;
+.checkbox__one-hundr-thous_label {
+  margin-left: 5px;
+}
+
+.checkbox__last-day,
+.checkbox__one-hundr-thous {
+  position: relative;
+
+  width: 40px;
+  height: 20px;
+  margin: 0;
+
+  vertical-align: top;
+
+  background: #ffffff;
+  border: 1px solid #bbc1e1;
+  border-radius: 30px;
+  outline: none;
+  cursor: pointer;
+
+
+  appearance: none;
+
+  transition: all 0.3s cubic-bezier(0.2, 0.85, 0.32, 1.2);
+}
+
+.checkbox__last-day::after,
+.checkbox__one-hundr-thous::after {
+  content: "";
+
+  position: absolute;
+  left: -3px;
+  top: -1.5px;
+  width: 19px;
+  height: 19px;
+  background-color: #bac5c7;
+  border-radius: 50%;
+
+  transform: translateX(0);
+
+  transition: all 0.3s ease-in-out;
+}
+
+.checkbox__last-day:checked::after,
+.checkbox__one-hundr-thous:checked::after {
+  transform: translateX(calc(100% + 3px));
+  background-color: #fff;
+}
+
+.checkbox__last-day:checked,
+.checkbox__one-hundr-thous:checked {
+  background-color: #15B2D6;
+}
+
+
+@media all and (max-width: 767px) {
+
+  .wrapper {
+    flex-direction: column;
+  }
+
+  #map {
+    width: 100%;
+    height: 370px;
+    /* height: 100%; */
+    background: aliceblu
+      /* width: 1500px; height: 800px;*/
+    ;
+  }
+
+  .data-wrapper {
+    width: 100%
+  }
+
+
+  .map-wrapper .list-control {
+
+    right: 15px;
+
+    width: 440px;
+  }
+
+  .covid-list {
+    height: 120px;
+
+  }
+
+  .control__wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .search-country {
+    align-self: center;
+  }
 }

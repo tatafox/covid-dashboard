@@ -84,18 +84,24 @@ export default class View {
       this.wrapperData
     );
 
-    this.addCountrySearch(covidTable, "country-search__table");
+    const tableControl = this.createElement(
+      "div",
+      "control__wrapper",
+      covidTable
+    );
+
+    this.addCountrySearch(tableControl, "country-search__table");
 
     const checkbxWrap = this.createElement(
       "div",
       "checkbox__wrapper",
-      covidTable
+      tableControl
     );
 
     const checkboxLastDay = this.createCheckbox(
       checkbxWrap,
       "checkbox__last-day",
-      "New cases (За последние сутки)",
+      "New cases", // (За последние сутки)",
       "table-"
     );
     /*const LastDayWrap = this.createElement(
@@ -122,7 +128,7 @@ export default class View {
     const checkboxOneHundThous = this.createCheckbox(
       checkbxWrap,
       "checkbox__one-hundr-thous",
-      "100 000 population cases (На 100 000 населения)",
+      "per 100 000 population", // (На 100 000 населения)",
       "table-"
     );
 
@@ -144,7 +150,7 @@ export default class View {
       "label",
       "checkbox__one-hundr-thous_label",
       OneHundThousDayWrap,
-      "100 000 population cases (На 100 000 населения)"
+      "per 100 000 population (На 100 000 населения)"
     );
     label.htmlFor = "checkbox__one-hundr-thous";*/
 
@@ -166,7 +172,7 @@ export default class View {
       "span",
       "covid-table__span",
       covidTableItem,
-      "Confirmed(Заболело):"
+      "Confirmed:" //(Заболело):"
     );
     this.createElement("span", "covid-table__span", covidTableItem, confirmed);
     covidTableItem = this.createElement(
@@ -178,7 +184,7 @@ export default class View {
       "span",
       "covid-table__span",
       covidTableItem,
-      "Deaths(Умерло):"
+      "Deaths:" //(Умерло):"
     );
     this.createElement("span", "covid-table__span", covidTableItem, deaths);
     covidTableItem = this.createElement(
@@ -190,7 +196,7 @@ export default class View {
       "span",
       "covid-table__span",
       covidTableItem,
-      "Recovered(Выздоровело):"
+      "Recovered:" //(Выздоровело):"
     );
     this.createElement("span", "covid-table__span", covidTableItem, recovered);
   }
@@ -217,7 +223,7 @@ export default class View {
     this.createCheckbox(
       controlPanel,
       "checkbox__one-hundr-thous",
-      "100 000 population cases (На 100 000 населения)",
+      "per 100 000 population", // (На 100 000 населения)",
       id
     );
 
@@ -283,7 +289,7 @@ export default class View {
     this.createCheckbox(
       covidListControl,
       "checkbox__one-hundr-thous",
-      "100 000 population cases (На 100 000 населения)",
+      "per 100 000 population (На 100 000 населения)",
       "list-"
     );
 
