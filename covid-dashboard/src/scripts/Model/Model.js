@@ -4,7 +4,7 @@ export default class Model {
     this.loadingCountry = false;
   }
 
-  async getCovidData() {
+  /*async getCovidData() {
     this.loading = true;
     let data;
     try {
@@ -33,7 +33,7 @@ export default class Model {
       this.loadingCountry = false;
     }
     return dataCountry;
-  }
+  }*/
 
   async getCovidClobalData() {
     this.loadingCountry = true;

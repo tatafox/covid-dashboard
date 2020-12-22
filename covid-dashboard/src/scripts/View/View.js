@@ -91,6 +91,13 @@ export default class View {
     );
 
     this.addCountrySearch(tableControl, "country-search__table");
+    const expandButton = this.createElement(
+      "button",
+      "button__expand",
+      tableControl
+    );
+    const imgButton = this.createElement("img", "button__img", expandButton);
+    imgButton.src = "../assets/expand-button.svg";
 
     const checkbxWrap = this.createElement(
       "div",
@@ -271,6 +278,13 @@ export default class View {
     );
     //создаем даталист поиска страны
     this.addCountrySearch(controlPanel, id + "__country-search");
+    const expandButton = this.createElement(
+      "button",
+      "button__expand",
+      controlPanel
+    );
+    const imgButton = this.createElement("img", "button__img", expandButton);
+    imgButton.src = "../assets/expand-button.svg";
   }
 
   addCovidList() {
