@@ -1,4 +1,4 @@
-//import './style.css';
+import "./style.css";
 
 import Controller from "./scripts/Controller/Controller.js";
 import View from "./scripts/View/View.js";

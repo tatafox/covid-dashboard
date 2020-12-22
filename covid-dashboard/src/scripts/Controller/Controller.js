@@ -7,7 +7,6 @@ import {
   setCountryFlag,
 } from "./changeCountry.js";
 
-//import { addMap, addMarker, map } from "./map.js";
 import {
   initChartMap,
   createPolygonSeries,
@@ -34,7 +33,6 @@ export default class Controller {
     this.dataHistoricalCountry = {};
     this.checkboxLastDay = false;
     this.checkboxOneHundThous = false;
-    //this.covidTableData;
     this.country;
     this.covidList;
     this.dataType;
@@ -44,8 +42,6 @@ export default class Controller {
   }
 
   init() {
-    //this.getCountryData();
-
     this.getCovidData();
 
     this.view.addCovidTable();
@@ -55,9 +51,6 @@ export default class Controller {
 
     initChartMap();
 
-    //addMap(); //this.view.map
-
-    //this.view.selectListData.addEventListener
     document.querySelectorAll(".select-data").forEach((item) => {
       item.addEventListener("change", (e) => this.changeListData(e));
     });
@@ -72,27 +65,14 @@ export default class Controller {
     });
 
     document.querySelectorAll(".search-country").forEach((item) => {
-      item.addEventListener(
-        "keydown",
-        (e) => this.changeCounty(e, "set")
-        //setCountry(e, this.dataCovidCountry)
-      );
-      item.addEventListener(
-        "click",
-        (e) => this.changeCounty(e, "click")
-        //clickCountry(e)
-      );
-      item.addEventListener(
-        "blur",
-        (e) => this.changeCounty(e, "set")
-        //setCountry(e, this.dataCovidCountry)
-      );
+      item.addEventListener("keydown", (e) => this.changeCounty(e, "set"));
+      item.addEventListener("click", (e) => this.changeCounty(e, "click"));
+      item.addEventListener("blur", (e) => this.changeCounty(e, "set"));
     });
   }
 
   clickButtonExpand(e) {
     e.path[3].classList.toggle("full-screen");
-    console.log(e.path[3]);
   }
 
   setCovidDataList() {
@@ -102,8 +82,6 @@ export default class Controller {
       item.removeEventListener("click");
     });
     this.dataCovidCountry.forEach((item) => {
-      //const findCountry = this.searchCountryData(item.CountryCode);
-      //console.log(findCountry);
       let data = this.switchCovidData(item);
       const population = !item.population ? 100000 : item.population;
 
@@ -113,7 +91,6 @@ export default class Controller {
 
       const arrayRow = [item.country, data, item.countryInfo.flag];
       dataArray.push(arrayRow);
-      //this.view.createListItem(item.Country, data, flagSrc);
     });
     if (this.country) {
       const countryList = dataArray.find(
@@ -132,23 +109,14 @@ export default class Controller {
   }
 
   setCountryClick(e) {
-    //console.log(e);
     const country =
       e.target.localName === "li"
         ? e.target.children[1].innerText
         : e.path[1].children[1].textContent;
-    //console.log(country); //, e.target, e.target.children[1].innerText);
-    console.log(
-      this.dataCovidCountry.find(
-        (item) => item.country.toLowerCase() === country.toLowerCase()
-      )
-    );
     this.country = this.dataCovidCountry.find(
       (item) => item.country.toLowerCase() === country.toLowerCase()
     );
-    document
-      .querySelectorAll(".search-country")
-      .forEach((item) => (item.value = this.country.country));
+    document.querySelectorAll(".search-country").forEach((item) => (item.value = this.country.country));
     this.updateCounty();
   }
 
@@ -179,62 +147,29 @@ export default class Controller {
       : this.updateDiagram(this.dataHistoricalAll);
   }
 
-  updateMap() {
-    //delPolygonSeries();
-
-    createPolygonSeries(this.dataMap);
-    polygonTemplate.events.on("hit", (ev) => {
-      console.log(ev, ev.target.dataItem._dataContext.id);
-      //zoomCountry(ev.target);
-      this.country = this.dataCovidCountry.find(
-        (item) => item.countryInfo.iso2 === ev.target.dataItem._dataContext.id
-      );
-      console.log(this.country);
-
-      document
-        .querySelectorAll(".search-country")
-        .forEach((item) => (item.value = this.country.country));
-      this.updateCounty();
-      // ev.target.dataItem.dataContext.name +
-    });
-    createTooltipText(
-      this.switchCovidData(),
-      this.dataMap,
-      this.checkboxOneHundThous
-    );
-  }
-
   changeListData(e) {
     document.querySelectorAll(".select-data").forEach((item) => {
       item.value = e.target.value;
     });
     this.dataType = e.target.value;
     this.setCovidDataList();
-    //document.getElementById("map").innerHTML = "";
-    //initChartMap();
-    //const dataMap = this.createDataArray();
     delPolygonSeries();
     this.updateMap();
-    /*delPolygonSeries();
-    createPolygonSeries(this.dataMap);
-    createTooltipText(
-      this.switchCovidData(),
-      this.dataMap,
-      this.checkboxOneHundThous
-    );*/
-
     this.country
       ? this.updateDiagram(this.dataHistoricalCountry)
       : this.updateDiagram(this.dataHistoricalAll);
   }
 
-  updateDiagram(currentData) {
-    this.diagram.clear();
-    let population = this.country ? this.country.population : POPULATIONOFEARTH;
-    population = this.checkboxOneHundThous ? population : 0;
-    const data = this.switchCovidData(currentData, true, population);
-    console.log(data);
-    this.diagram.createDiagram(data);
+  changeCounty(e, type) {
+    type === "set" ? setCountry(e, this.dataCovidCountry) : clickCountry(e);
+    if (setCountryFlag) {
+      if (!currentCountry) {
+        this.resetCounty();
+      } else {
+        this.country = currentCountry[0];
+        this.updateCounty();
+      }
+    }
   }
 
   switchCovidData(item, flagDiagram, population) {
@@ -286,24 +221,24 @@ export default class Controller {
     return data;
   }
 
-  changeCounty(e, type) {
-    type === "set" ? setCountry(e, this.dataCovidCountry) : clickCountry(e);
-    if (setCountryFlag) {
-      if (!currentCountry) {
-        this.resetCounty();
-      } else {
-        this.country = currentCountry[0];
-        this.updateCounty();
-      }
-    }
-  }
-
   updateCounty() {
     zoomCountry(polygonSeries.getPolygonById(this.country.countryInfo.iso2));
-    //получаем популяцию страны
     this.setCovidDataList();
     this.changeCovidTableData(this.country, this.country.population);
     this.getCovidHistoricalCountryData();
+  }
+
+  updateMap() {
+    createPolygonSeries(this.dataMap);
+    polygonTemplate.events.on("hit", (ev) => {
+      this.country = this.dataCovidCountry.find(
+        (item) => item.countryInfo.iso2 === ev.target.dataItem._dataContext.id
+      );
+
+      document.querySelectorAll(".search-country").forEach((item) => (item.value = this.country.country));
+      this.updateCounty();
+    });
+    createTooltipText(this.switchCovidData(), this.dataMap, this.checkboxOneHundThous);
   }
 
   resetCounty() {
@@ -314,9 +249,34 @@ export default class Controller {
     zoomOut();
   }
 
-  /*searchCountryData(countryCode) {
-    return this.dataCountry.find((item) => item.alpha2Code === countryCode);
-  }*/
+  updateDiagram(currentData) {
+    this.diagram.clear();
+    let population = this.country ? this.country.population : POPULATIONOFEARTH;
+    population = this.checkboxOneHundThous ? population : 0;
+    const data = this.switchCovidData(currentData, true, population);
+    this.diagram.createDiagram(data);
+  }
+
+  changeCovidTableData(dataCovid, population) {
+    let confirmed = this.checkboxLastDay
+      ? dataCovid.todayCases
+      : dataCovid.cases;
+    let deaths = this.checkboxLastDay
+      ? dataCovid.todayDeaths
+      : dataCovid.deaths;
+    let recovered = this.checkboxLastDay
+      ? dataCovid.todayRecovered
+      : dataCovid.recovered;
+
+    population = !population ? 1 : population / 100000;
+
+    if (this.checkboxOneHundThous) {
+      confirmed = Math.round((confirmed / population) * 100) / 100;
+      deaths = Math.round((deaths / population) * 100) / 100;
+      recovered = Math.round((recovered / population) * 100) / 100;
+    }
+    this.view.addCovidTableData(confirmed, deaths, recovered);
+  }
 
   getDiagramData(dataObject, newFlag, population) {
     const data = [];
@@ -331,57 +291,19 @@ export default class Controller {
       };
       data.push(obj);
       prev = newFlag ? valueData : 0;
-      //console.log(`${key}: ${valueData}`);
     }
-    //console.log(data);
     return data;
-  }
-
-  changeCovidTableData(dataCovid, population) {
-    console.log(dataCovid);
-    let confirmed = this.checkboxLastDay
-      ? dataCovid.todayCases
-      : dataCovid.cases;
-    let deaths = this.checkboxLastDay
-      ? dataCovid.todayDeaths
-      : dataCovid.deaths;
-    let recovered = this.checkboxLastDay
-      ? dataCovid.todayRecovered
-      : dataCovid.recovered;
-    console.log(this.checkboxLastDay, dataCovid.recovered);
-
-    population = !population ? 1 : population / 100000;
-
-    if (this.checkboxOneHundThous) {
-      confirmed = Math.round((confirmed / population) * 100) / 100;
-      deaths = Math.round((deaths / population) * 100) / 100;
-      recovered = Math.round((recovered / population) * 100) / 100;
-    }
-    this.view.addCovidTableData(confirmed, deaths, recovered);
   }
 
   async getCovidData() {
     this.dataCovidGlobal = await this.model.getCovidClobalData();
-    console.log(this.dataCovidGlobal);
     this.dataCovidCountry = await this.model.getCovidCountryData();
-    console.log(this.dataCovidCountry);
 
-    //const data = await this.model.getCovidData();
-    //this.dataCovidCountry = data.Countries;
-    //this.dataCovidGlobal = data.Global;
-    this.view.addCovidTableData(
-      this.dataCovidGlobal.cases,
-      this.dataCovidGlobal.deaths,
-      this.dataCovidGlobal.recovered
-    );
+    this.view.addCovidTableData(this.dataCovidGlobal.cases, this.dataCovidGlobal.deaths, this.dataCovidGlobal.recovered);
     this.covidList = this.view.covidList;
     this.setCovidDataList();
     this.dataMap = createDataArray(this.dataCovidCountry);
     this.updateMap();
-    //createPolygonSeries(this.dataMap);
-    //createTooltipText("TotalConfirmed", this.dataMap);
-
-    //this.addMapMarker();
   }
 
   async getCovidHistoricalAllData() {
@@ -392,10 +314,7 @@ export default class Controller {
   }
 
   async getCovidHistoricalCountryData() {
-    this.dataHistoricalCountry = await this.model.getCovidHistoricalCountryData(
-      this.country.countryInfo.iso2
-    );
-    console.log(this.dataHistoricalCountry);
+    this.dataHistoricalCountry = await this.model.getCovidHistoricalCountryData(this.country.countryInfo.iso2);
     this.updateDiagram(this.dataHistoricalCountry);
   }
 }
