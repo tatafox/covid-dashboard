@@ -9,7 +9,7 @@ function setCountry(e, dataCovidCountry) {
     (e.type === "keydown" && (e.which == 13 || e.keyCode == 13))
   ) {
     setCountryFlag = true;
-    if (e.target.value === "") {
+    if (!e.target.value) {
       setDefault(e, dataList);
     } else {
       currentCountry = dataCovidCountry.filter(

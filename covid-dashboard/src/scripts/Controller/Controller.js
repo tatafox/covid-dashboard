@@ -1,4 +1,4 @@
-const POPULATIONOFEARTH = 7827000000;
+const POPULATION_OF_EARTH = 7827000000;
 
 import {
   setCountry,
@@ -138,7 +138,7 @@ export default class Controller {
 
   setCheckbox() {
     const dataForDOM = !this.country ? this.dataCovidGlobal : this.country;
-    this.changeCovidTableData(dataForDOM, POPULATIONOFEARTH);
+    this.changeCovidTableData(dataForDOM, POPULATION_OF_EARTH);
     delPolygonSeries();
     this.updateMap();
     this.setCovidDataList();
@@ -243,7 +243,7 @@ export default class Controller {
 
   resetCounty() {
     this.country = "";
-    this.changeCovidTableData(this.dataCovidGlobal, POPULATIONOFEARTH);
+    this.changeCovidTableData(this.dataCovidGlobal, POPULATION_OF_EARTH);
     this.setCovidDataList();
     this.updateDiagram(this.dataHistoricalAll);
     zoomOut();
@@ -251,7 +251,7 @@ export default class Controller {
 
   updateDiagram(currentData) {
     this.diagram.clear();
-    let population = this.country ? this.country.population : POPULATIONOFEARTH;
+    let population = this.country ? this.country.population : POPULATION_OF_EARTH;
     population = this.checkboxOneHundThous ? population : 0;
     const data = this.switchCovidData(currentData, true, population);
     this.diagram.createDiagram(data);
@@ -268,10 +268,10 @@ export default class Controller {
       ? dataCovid.todayRecovered
       : dataCovid.recovered;
 
-    population = !population ? 1 : population / 100000;
+    population = population ? population / 100000 : 1;
 
     if (this.checkboxOneHundThous) {
-      confirmed = Math.round((confirmed / population) * 100) / 100;
+      confirmed = Math.floor(confirmed / population);
       deaths = Math.round((deaths / population) * 100) / 100;
       recovered = Math.round((recovered / population) * 100) / 100;
     }

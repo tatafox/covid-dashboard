@@ -12,6 +12,7 @@ export default class Model {
       const resCountry = await fetch(urlCountry);
       dataCountry = await resCountry.json();
     } catch (e) {
+      console.error(e)
     } finally {
       this.loadingCountry = false;
     }
@@ -26,6 +27,7 @@ export default class Model {
       const resCountry = await fetch(urlCountry);
       dataCountry = await resCountry.json();
     } catch (e) {
+      console.error(e)
     } finally {
       this.loadingCountry = false;
     }
@@ -40,6 +42,7 @@ export default class Model {
       const resCountry = await fetch(urlCountry);
       dataCountry = await resCountry.json();
     } catch (e) {
+      console.error(e)
     } finally {
       this.loadingCountry = false;
     }
@@ -54,6 +57,7 @@ export default class Model {
       const resCountry = await fetch(urlCountry);
       dataCountry = await resCountry.json();
     } catch (e) {
+      console.error(e)
     } finally {
       this.loadingCountry = false;
     }

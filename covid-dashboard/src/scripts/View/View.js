@@ -61,9 +61,7 @@ export default class View {
     const wrap = this.createElement("div", "checkbox-item__wrapper", parrent);
 
     const checkbox = this.createElement("input", name, wrap);
-    checkbox.type = "checkbox";
-    checkbox.id = id + name;
-    checkbox.name = id + name;
+    checkbox = {...checkbox, type: "checkbox", id: id+name, name: id+name};
     const label = this.createElement("label", name + "_label", wrap, text);
     label.htmlFor = id + name;
 

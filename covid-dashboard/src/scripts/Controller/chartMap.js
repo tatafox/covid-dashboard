@@ -59,12 +59,14 @@ function createTooltipText(type, dataMap, flag100) {
   });
   polygonTemplate.adapter.add("tooltipText", function (tooltipText, target) {
     const currentValue = target.dataItem._dataContext[findType];
-    const valOn100 = !currentValue
-      ? 0
-      : (currentValue * 100000) / target.dataItem._dataContext.population;
+    const valOn100 = currentValue
+      ? (currentValue * 100000) / target.dataItem._dataContext.population
+      : 0;
     const amount = flag100 ? Math.round(valOn100 * 100) / 100 : currentValue;
     const str = "[bold]{name}:[/] " + amount + " ";
     return (tooltipText = str);
+  
+      
   });
 }
 
@@ -77,9 +79,8 @@ function zoomOut() {
 }
 
 function getZoomLevel(mapPolygon) {
-  const w = mapPolygon.polygon.bbox.width;
-  const h = mapPolygon.polygon.bbox.width;
-  return Math.min(chart.seriesWidth / (w * 2), chart.seriesHeight / (h * 2));
+  const [w, h] = new Array(2).fill(mapPolygon.polygon.bbox.width);
+  return Math.min(chart.seriesWidth, chart.seriesHeight)  / (w * 2);
 }
 
 export {
